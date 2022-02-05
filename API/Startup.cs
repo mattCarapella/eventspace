@@ -39,6 +39,13 @@ public class Startup
             // Connection string comes from _config in constructor and is defined in /API/appsettings.Development.json
             opt.UseSqlite(_config.GetConnectionString("DefaultConnection"));
         });
+        services.AddCors(opt => 
+        {
+            opt.AddPolicy("CorsPolicy", policy =>
+            {
+                policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+            });
+        });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +61,8 @@ public class Startup
         // app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseCors("CorsPolicy"); 
 
         app.UseAuthorization();
 
