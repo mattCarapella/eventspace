@@ -1,3 +1,5 @@
+using Persistence;
+
 namespace API;
 
 public class Program
