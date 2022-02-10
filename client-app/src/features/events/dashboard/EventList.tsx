@@ -1,15 +1,18 @@
 import React, { SyntheticEvent, useState } from 'react';
 import { Button, Item, Label, Segment } from 'semantic-ui-react';
 import { Event } from '../../../app/models/event';
+import { useStore } from '../../../app/stores/store';
 
 interface Props {
   events: Event[];
   submitting: boolean;
-  selectEvent: (id: string) => void;
   deleteEvent: (id: string) => void;
 }
-export default function EventList({ events, submitting, selectEvent, deleteEvent }: Props) {
+export default function EventList({ events, submitting, deleteEvent }: Props) {
 
+  const {eventStore} = useStore();
+  const { selectEvent, loading } = eventStore;
+  
   const [target, setTarget] = useState('');
 
   function handleEventDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
