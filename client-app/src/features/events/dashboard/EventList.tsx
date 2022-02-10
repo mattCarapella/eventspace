@@ -1,17 +1,13 @@
 import React, { SyntheticEvent, useState } from 'react';
+import { observer } from 'mobx-react-lite';
 import { Button, Item, Label, Segment } from 'semantic-ui-react';
-import { Event } from '../../../app/models/event';
 import { useStore } from '../../../app/stores/store';
 
-interface Props {
-  events: Event[];
-  submitting: boolean;
-  deleteEvent: (id: string) => void;
-}
-export default function EventList({ events, submitting, deleteEvent }: Props) {
+
+export default observer(function EventList() {
 
   const {eventStore} = useStore();
-  const { selectEvent, loading } = eventStore;
+  const { eventsByDate, selectEvent, deleteEvent, loading } = eventStore;
   
   const [target, setTarget] = useState('');
 
@@ -23,7 +19,7 @@ export default function EventList({ events, submitting, deleteEvent }: Props) {
   return (
     <Segment>
       <Item.Group divided>
-        {events.map(event => (
+        {eventsByDate.map(event => (
           <Item key={event.id}>
             <Item.Content>
               <Item.Header as='a'>{event.name}</Item.Header>
@@ -42,7 +38,7 @@ export default function EventList({ events, submitting, deleteEvent }: Props) {
                 <Button 
                   name={event.id}
                   onClick={(e) => handleEventDelete(e, event.id)} 
-                  loading={submitting && target === event.id} 
+                  loading={loading && target === event.id} 
                   floated='right' 
                   content='Delete' 
                   color='red' 
@@ -55,4 +51,4 @@ export default function EventList({ events, submitting, deleteEvent }: Props) {
       </Item.Group>
     </Segment>
   );
-}
+});
