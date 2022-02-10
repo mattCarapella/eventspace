@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 import { Button, Item, Label, Segment } from 'semantic-ui-react';
 import { Event } from '../../../app/models/event';
 
 interface Props {
   events: Event[];
+  submitting: boolean;
   selectEvent: (id: string) => void;
   deleteEvent: (id: string) => void;
 }
-export default function EventList({ events, selectEvent, deleteEvent }: Props) {
+export default function EventList({ events, submitting, selectEvent, deleteEvent }: Props) {
+
+  const [target, setTarget] = useState('');
+
+  function handleEventDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
+    setTarget(e.currentTarget.name);
+    deleteEvent(id);
+  }
+
   return (
     <Segment>
       <Item.Group divided>
@@ -21,8 +30,20 @@ export default function EventList({ events, selectEvent, deleteEvent }: Props) {
                 <div>{event.venue} | {event.city}, {event.state}</div>
               </Item.Description>
               <Item.Extra>
-                <Button onClick={() => selectEvent(event.id)} floated='right' content='More Info' color='blue' />
-                <Button onClick={() => deleteEvent(event.id)} floated='right' content='Delete' color='red' />
+                <Button 
+                  onClick={() => selectEvent(event.id)} 
+                  floated='right' 
+                  content='More Info' 
+                  color='blue' 
+                />
+                <Button 
+                  name={event.id}
+                  onClick={(e) => handleEventDelete(e, event.id)} 
+                  loading={submitting && target === event.id} 
+                  floated='right' 
+                  content='Delete' 
+                  color='red' 
+                />
                 <Label basic content={event.category} />
               </Item.Extra>
             </Item.Content>

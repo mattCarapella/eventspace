@@ -8,22 +8,24 @@ import EventList from './EventList';
 interface Props {
   events: Event[];
   selectedEvent: Event | undefined;
+  editMode: boolean;
+  submitting: boolean,
   selectEvent: (id: string) => void;
   cancelSelectEvent: () => void;
-  editMode: boolean;
   openForm: (id: string) => void;
   closeForm: () => void;
   createOrEdit: (event: Event) => void;
   deleteEvent: (id: string) => void;
 }
 
-export default function EventDashboard({ events, selectedEvent, selectEvent, cancelSelectEvent, 
-      editMode, openForm, closeForm, createOrEdit, deleteEvent }: Props) {
+export default function EventDashboard({ events, selectedEvent, editMode, submitting, 
+      selectEvent, cancelSelectEvent, openForm, closeForm, createOrEdit, deleteEvent }: Props) {
   return (
     <Grid>
       <Grid.Column width='10'>
         <EventList 
           events={events} 
+          submitting={submitting}
           selectEvent={selectEvent}
           deleteEvent={deleteEvent}
         />
@@ -38,6 +40,7 @@ export default function EventDashboard({ events, selectedEvent, selectEvent, can
         {editMode &&
         <EventForm 
           event={selectedEvent}
+          submitting={submitting}
           closeForm={closeForm}
           createOrEdit={createOrEdit}
         />}
