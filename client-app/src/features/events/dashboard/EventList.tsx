@@ -1,6 +1,6 @@
 import React, { SyntheticEvent, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button, Item, Label, Segment } from 'semantic-ui-react';
+import { Button, Item, Icon, Label, Segment } from 'semantic-ui-react';
 import { useStore } from '../../../app/stores/store';
 
 
@@ -26,23 +26,26 @@ export default observer(function EventList() {
               <Item.Meta>{event.date}</Item.Meta>
               <Item.Description>
                 <div>{event.description}</div>
-                <div>{event.venue} | {event.city}, {event.state}</div>
+                <div style={{ fontWeight: 'bolder', paddingTop: '9px' }}>{event.venue} | {event.city}, {event.state}</div>
               </Item.Description>
               <Item.Extra>
                 <Button 
                   onClick={() => selectEvent(event.id)} 
                   floated='right' 
-                  content='More Info' 
+                  content='Info' 
                   color='blue' 
+                  style={{ borderRadius: '50px' }} 
                 />
                 <Button 
+                  icon
                   name={event.id}
                   onClick={(e) => handleEventDelete(e, event.id)} 
                   loading={loading && target === event.id} 
-                  floated='right' 
-                  content='Delete' 
-                  color='red' 
-                />
+                  floated='right'
+                  style={{ borderRadius: '50px' }} 
+                >
+                  <Icon name='trash alternate' />
+                </Button>
                 <Label basic content={event.category} />
               </Item.Extra>
             </Item.Content>
