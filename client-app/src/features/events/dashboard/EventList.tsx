@@ -2,12 +2,13 @@ import React, { SyntheticEvent, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Button, Item, Icon, Label, Segment } from 'semantic-ui-react';
 import { useStore } from '../../../app/stores/store';
+import { Link } from 'react-router-dom';
 
 
 export default observer(function EventList() {
 
   const {eventStore} = useStore();
-  const { eventsByDate, selectEvent, deleteEvent, loading } = eventStore;
+  const { eventsByDate, loading, deleteEvent } = eventStore;
   
   const [target, setTarget] = useState('');
 
@@ -30,7 +31,9 @@ export default observer(function EventList() {
               </Item.Description>
               <Item.Extra>
                 <Button 
-                  onClick={() => selectEvent(event.id)} 
+                  // onClick={() => selectEvent(event.id)}
+                  as={Link}
+                  to={`/events/${event.id}`}
                   floated='right' 
                   content='Info' 
                   color='blue' 

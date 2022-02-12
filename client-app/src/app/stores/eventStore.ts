@@ -15,12 +15,15 @@ export default class EventStore {
     makeAutoObservable(this);
   }
 
+  // COMPUTED PROPERTIES (as per the 'get') derives new state from existing state in observables
+
+
   get eventsByDate() {
     return Array.from(this.eventsRegistry.values()).sort((a,b) => 
           Date.parse(a.date) - Date.parse(b.date));
   }
 
-  // Actions
+  // ACTIONS
 
   loadEvents = async () => {
     this.setLoadingInitial(true);
@@ -28,8 +31,7 @@ export default class EventStore {
       const events = await agent.Events.list();
       runInAction(() => {
         events.forEach(event => {
-          event.date = event.date.split('T')[0];
-          this.eventsRegistry.set(event.id, event);
+          this.setEvent(event);
         });
         this.setLoadingInitial(false);
       })
@@ -41,26 +43,40 @@ export default class EventStore {
     }
   }
 
+  loadEvent = async (id: string) => {
+    // first check if activity is already in memory
+    let event = this.getEvent(id);
+    if (event) {
+      this.selectedEvent = event;
+    }
+    else {
+      this.loadingInitial = true;
+      try {
+        event = await agent.Events.details(id);
+        this.setEvent(event);
+        this.setSelectedEvent(event);
+        this.setLoadingInitial(false)
+      } catch (error) {
+        console.log(error)
+      }  
+    }
+  }
+
+  private getEvent = (id: string) => {
+    return this.eventsRegistry.get(id);
+  }
+
+  private setEvent = (event: Event) => {
+    event.date = event.date.split('T')[0];
+    this.eventsRegistry.set(event.id, event);
+  }
+
+  setSelectedEvent = (event: Event) => {
+    this.selectedEvent = event;
+  }
+
   setLoadingInitial = (state: boolean) => {
     this.loadingInitial = state;
-  }
-
-  selectEvent = (id: string) => {
-    // this.selectedEvent = this.events.find(x => x.id === id);
-    this.selectedEvent = this.eventsRegistry.get(id);
-  }
-
-  cancelSelectedEvent = () => {
-    this.selectedEvent = undefined;
-  }
-
-  openForm = (id?: string) => {
-    id ? this.selectEvent(id) : this.cancelSelectedEvent();
-    this.editMode = true
-  }
-
-  closeForm = () => {
-    this.editMode = false;
   }
 
   createEvent = async (event: Event) => {
@@ -109,7 +125,7 @@ export default class EventStore {
       runInAction(() => {
         // this.events = [...this.events.filter(x => x.id !== id)];
         this.eventsRegistry.delete(id);
-        if (this.selectedEvent?.id === id) this.cancelSelectedEvent();
+        // if (this.selectedEvent?.id === id) this.cancelSelectedEvent();
         this.loading = false;
       });
     } catch (error) {
@@ -121,3 +137,27 @@ export default class EventStore {
   }
 
 }
+
+
+
+
+
+
+
+  // selectEvent = (id: string) => {
+  //   // this.selectedEvent = this.events.find(x => x.id === id);
+  //   this.selectedEvent = this.eventsRegistry.get(id);
+  // }
+
+  // cancelSelectedEvent = () => {
+  //   this.selectedEvent = undefined;
+  // }
+
+  // openForm = (id?: string) => {
+  //   id ? this.selectEvent(id) : this.cancelSelectedEvent();
+  //   this.editMode = true
+  // }
+
+  // closeForm = () => {
+  //   this.editMode = false;
+  // }
