@@ -1,9 +1,13 @@
-import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Button, Card, Image } from 'semantic-ui-react';
-import LoadingComponent from '../../../app/layout/LoadingComponent';
+import { observer } from 'mobx-react-lite';
+import { useParams } from 'react-router-dom';
+import { Grid } from 'semantic-ui-react';
 import { useStore } from '../../../app/stores/store';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
+import EventDetailsComments from './EventDetailsComments';
+import EventDetailsHeader from './EventDetailsHeader';
+import EventDetailsInfo from './EventDetailsInfo';
+import EventDetailsSidebar from './EventDetailsSidebar';
 
 export default observer(function EventDetails() {
   
@@ -18,23 +22,15 @@ export default observer(function EventDetails() {
   if (loadingInitial || !event) return <LoadingComponent content='Loading...' />
 
   return (
-    <Card fluid>
-      <Image src={`/assets/categoryImages/${event.category}.jpg`} key={`/assets/categoryImages/${event.category}.jpg`} />
-      <Card.Content>
-        <Card.Header>{event.name}</Card.Header>
-        <Card.Meta>
-          <span>{event.date}</span>
-        </Card.Meta>
-        <Card.Description>
-          {event.description}
-        </Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <Button.Group widths='2'>
-          <Button as={Link} to={`/edit/${event.id}`} basic color='blue' content='Edit' />
-          <Button as={Link} to='/events' basic color='grey' content='Cancel' />
-        </Button.Group>
-      </Card.Content>
-    </Card>
+    <Grid>
+      <Grid.Column width={10}>
+        <EventDetailsHeader event={event} />
+        <EventDetailsInfo event={event} />
+        <EventDetailsComments />
+      </Grid.Column>
+      <Grid.Column width={6}>
+        <EventDetailsSidebar />
+      </Grid.Column>
+    </Grid>
   );
 });
