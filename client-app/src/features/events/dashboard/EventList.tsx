@@ -1,8 +1,7 @@
-import React, { Fragment, SyntheticEvent, useState } from 'react';
+import { Fragment } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Button, Item, Icon, Label, Segment, Header } from 'semantic-ui-react';
+import { Item, Segment, Header } from 'semantic-ui-react';
 import { useStore } from '../../../app/stores/store';
-import { Link } from 'react-router-dom';
 import EventListItem from './EventListItem';
 
 export default observer(function EventList() {
@@ -14,7 +13,7 @@ export default observer(function EventList() {
     <>
       {eventsByDateGroup.map(([group, events]) => (
         <Fragment key={group}>
-          <Header sub color='teal'>{group}</Header>
+          <Header sub color='grey'>{group}</Header>
           <Segment>
             <Item.Group divided>
               {events.map(event => (
