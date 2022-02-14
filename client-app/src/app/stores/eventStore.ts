@@ -3,6 +3,9 @@ import agent from "../api/agent";
 import { Event } from "../models/event";
 
 export default class EventStore {
+  
+  // OBSERVABLES: 
+
   eventsRegistry = new Map<string, Event>();
   selectedEvent: Event | undefined = undefined;
   editMode: boolean = false;
@@ -13,14 +16,26 @@ export default class EventStore {
     makeAutoObservable(this);
   }
 
-  // COMPUTED PROPERTIES (as per the 'get') derives new state from existing state in observables
+  // COMPUTED PROPERTIES: 
+  // Signified by 'get', derives new state from existing state in observables
 
   get eventsByDate() {
     return Array.from(this.eventsRegistry.values()).sort((a,b) => 
-          Date.parse(a.date) - Date.parse(b.date));
+        Date.parse(a.date) - Date.parse(b.date));
   }
 
-  // ACTIONS
+  get eventsByDateGroup() {
+    // returns events grouped by date as key value pair <date: string, events: Event[]>
+    return Object.entries(
+      this.eventsByDate.reduce((events, event) => {
+        const date = event.date;
+        events[date] = events[date] ? [...events[date], event] : [event];
+        return events;
+      }, {} as {[key: string]: Event[]})
+    )
+  }
+
+  // ACTIONS:
 
   loadEvents = async () => {
     this.setLoadingInitial(true);
