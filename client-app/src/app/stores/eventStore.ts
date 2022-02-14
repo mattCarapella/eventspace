@@ -1,10 +1,8 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Event } from "../models/event";
-import {v4 as uuid} from 'uuid';
 
 export default class EventStore {
-  // events: Event[] = [];
   eventsRegistry = new Map<string, Event>();
   selectedEvent: Event | undefined = undefined;
   editMode: boolean = false;
@@ -16,7 +14,6 @@ export default class EventStore {
   }
 
   // COMPUTED PROPERTIES (as per the 'get') derives new state from existing state in observables
-
 
   get eventsByDate() {
     return Array.from(this.eventsRegistry.values()).sort((a,b) => 
@@ -44,10 +41,11 @@ export default class EventStore {
   }
 
   loadEvent = async (id: string) => {
-    // first check if activity is already in memory
+    // first check if event is already in memory
     let event = this.getEvent(id);
     if (event) {
       this.selectedEvent = event;
+      return event;
     }
     else {
       this.loadingInitial = true;
@@ -55,7 +53,8 @@ export default class EventStore {
         event = await agent.Events.details(id);
         this.setEvent(event);
         this.setSelectedEvent(event);
-        this.setLoadingInitial(false)
+        this.setLoadingInitial(false);
+        return event;
       } catch (error) {
         console.log(error)
       }  
@@ -81,11 +80,9 @@ export default class EventStore {
 
   createEvent = async (event: Event) => {
     this.loading = true;
-    event.id = uuid();
     try {
       await agent.Events.create(event);
       runInAction(() => {
-        // this.events.push(event);
         this.eventsRegistry.set(event.id, event);
         this.selectedEvent = event;
         this.editMode = false;
@@ -104,7 +101,6 @@ export default class EventStore {
     try {
       await agent.Events.update(event);
       runInAction(() => {
-        // this.events = [...this.events.filter(x => x.id !== event.id), event];
         this.eventsRegistry.set(event.id, event);
         this.selectedEvent = event;
         this.editMode = false;
@@ -123,9 +119,7 @@ export default class EventStore {
     try {
       await agent.Events.delete(id);
       runInAction(() => {
-        // this.events = [...this.events.filter(x => x.id !== id)];
         this.eventsRegistry.delete(id);
-        // if (this.selectedEvent?.id === id) this.cancelSelectedEvent();
         this.loading = false;
       });
     } catch (error) {

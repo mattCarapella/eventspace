@@ -1,9 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Container } from 'semantic-ui-react'
 import Navbar from './Navbar';
 import EventDashboard from '../../features/events/dashboard/EventDashboard';
-import LoadingComponent from './LoadingComponent';
-import { useStore } from '../stores/store';
 import { observer } from 'mobx-react-lite';
 import { Route, useLocation } from 'react-router-dom';
 import EventDetails from '../../features/events/details/EventDetails';
@@ -21,7 +19,7 @@ function App() {
         <Route exact path='/' component={HomePage} />
         <Route exact path='/events' component={EventDashboard} />
         <Route path='/events/:id' component={EventDetails} />
-        <Route path={['/createEvent', 'edit/:id']} key={location.key} component={EventForm} />
+        <Route path={['/createEvent', '/edit/:id']} key={location.key} component={EventForm} />
       </Container>
     </>
   );

@@ -13,13 +13,13 @@ export default observer(function EventDetails() {
 
   useEffect(() => {
     if(id) loadEvent(id);
-  }, [loadEvent]);
+  }, [id, loadEvent]);
 
   if (loadingInitial || !event) return <LoadingComponent content='Loading...' />
 
   return (
     <Card fluid>
-      <Image src={`/assets/categoryImages/${event.category}.jpg`}/>
+      <Image src={`/assets/categoryImages/${event.category}.jpg`} key={`/assets/categoryImages/${event.category}.jpg`} />
       <Card.Content>
         <Card.Header>{event.name}</Card.Header>
         <Card.Meta>
@@ -31,7 +31,7 @@ export default observer(function EventDetails() {
       </Card.Content>
       <Card.Content extra>
         <Button.Group widths='2'>
-          <Button basic color='blue' content='Edit' />
+          <Button as={Link} to={`/edit/${event.id}`} basic color='blue' content='Edit' />
           <Button as={Link} to='/events' basic color='grey' content='Cancel' />
         </Button.Group>
       </Card.Content>
