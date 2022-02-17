@@ -13,14 +13,21 @@ function App() {
  
   return (
     <>
-      
-      <Navbar />
-      <Container style={{ marginTop: '7em' }}>
-        <Route exact path='/' component={HomePage} />
-        <Route exact path='/events' component={EventDashboard} />
-        <Route path='/events/:id' component={EventDetails} />
-        <Route path={['/createEvent', '/edit/:id']} key={location.key} component={EventForm} />
-      </Container>
+      <Route exact path='/' component={HomePage} />
+      <Route
+        path={'/(.+)'} 
+        render = {() => (
+          <>
+            <Navbar />
+            <Container style={{ marginTop: '7em' }}>
+              <Route exact path='/' component={HomePage} />
+              <Route exact path='/events' component={EventDashboard} />
+              <Route path='/events/:id' component={EventDetails} />
+              <Route path={['/createEvent', '/edit/:id']} key={location.key} component={EventForm} />
+            </Container>
+          </>
+        )}
+      />
     </>
   );
 }
