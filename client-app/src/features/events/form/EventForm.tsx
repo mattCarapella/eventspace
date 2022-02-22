@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { Button, Form, Segment } from 'semantic-ui-react';
 import { useStore } from '../../../app/stores/store';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import {v4 as uuid} from 'uuid';
+import { v4 as uuid } from 'uuid';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 
 export default observer(function EventForm() {

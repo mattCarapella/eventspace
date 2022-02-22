@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Application.Events;
 using MediatR;
 using AutoMapper;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -19,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using Persistence;
 using Application.Core;
 using API.Extensions;
+using FluentValidation.AspNetCore;
 
 namespace API;
 
@@ -33,9 +33,13 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddControllers();
-        // Services have been moved to API/Extensions/ApplicationServiceExtensions.cs
-        services.AddApplicationServices(_config);   
+		// FluentValidation added in section 103
+    	services.AddControllers().AddFluentValidation(config =>                 
+      	{
+        	config.RegisterValidatorsFromAssemblyContaining<Create>();
+      	});
+		// Services have been moved to API/Extensions/ApplicationServiceExtensions.cs
+		services.AddApplicationServices(_config);   
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
