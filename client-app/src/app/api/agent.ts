@@ -1,5 +1,8 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
+import { history } from '../..';
 import { Event } from '../models/event';
+import { store } from '../stores/store';
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
@@ -9,13 +12,54 @@ const sleep = (delay: number) => {
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
 
-axios.interceptors.response.use(response => {
-  return sleep(1000).then(() => {
-    return response;
-  }).catch((error) => {
-    console.log(error);
-    return Promise.reject(error);
-  });
+
+// Interceptors can intercept requests or responses before they're handled and perform operations
+
+axios.interceptors.response.use(async response => {
+  // Do something before request is sent. Any status code that lie within the range of 2xx cause this function to trigger
+  await sleep(1000);
+  return response;
+}, (error: AxiosError) => {
+  // Do something with response error. Any status codes that falls outside the range of 2xx cause this function to trigger
+  const {data, status, config} = error.response!; // we can use ! here as we know there will always be an error
+  switch(status) {
+    case 400: 
+      if (typeof data === 'string') {
+        toast.error(data);
+      }
+      if (config.method === 'get' && data.errors.hasOwnProperty('id')) {							// ******* UPDATE THIS 114
+        history.push('/not-found');
+      }
+      // toast.error('Bad Request');
+      if (data.errors) {
+				// Validation error response
+				const modalStateErrors = [];
+				// loop over all errors, push them into array then flatten the array to we see the validation error strings rather than objects
+				for (const key in data.errors) {
+        	if (data.errors[key]) {
+						modalStateErrors.push(data.errors[key]);
+					}
+				}
+				throw modalStateErrors.flat();
+			} else {
+				toast.error(data);
+			}
+      break;
+    case 401:
+      toast.error('Unauthorized');
+      break;
+    case 404:
+      //toast.error('Not Found');
+      history.push('/not-found'); // history is imported from index.tsx
+      break;
+    case 500:
+      // toast.error('Server Error');
+      store.commonStore.setServerError(data);
+      history.push('/server-error');
+      break;
+  }
+  // Promise represents the end of a completed async operation
+  return Promise.reject(error);
 })
 
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;

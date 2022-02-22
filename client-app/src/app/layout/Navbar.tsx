@@ -10,6 +10,7 @@ export default function Navbar() {
           EventTime
         </Menu.Item>
         <Menu.Item name='Events' as={Link} to='/events' position='right' />
+        <Menu.Item name='Errors' as={Link} to='/errors'  />
         <Menu.Item>
           <Button as={Link} to='/createEvent' positive content='Add an event' />
         </Menu.Item>

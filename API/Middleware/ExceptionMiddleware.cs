@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 namespace API.Middleware;
 public class ExceptionMiddleware
 {
-    // Middleware is used in API/StartUp.cs
+    // Middleware is brought in and used in API/StartUp.cs
 
 	private readonly RequestDelegate _next;
 	private readonly ILogger<ExceptionMiddleware> _logger;
