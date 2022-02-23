@@ -20,6 +20,7 @@ public class AccountController : ControllerBase
 		_userManager = userManager;
 	}
 
+	[AllowAnonymous]
 	[HttpPost("login")]
 	public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
 	{

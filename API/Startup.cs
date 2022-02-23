@@ -34,8 +34,13 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-		// FluentValidation added in section 103
-    	services.AddControllers().AddFluentValidation(config =>                 
+    	services.AddControllers(opt => {
+			// Create an authorization policy so every endpoint requires authentication unless we specify otherwise
+			var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+			// Filters are applied to all actions. Add [AllowAnonymous] to bypass the auth filter
+			opt.Filters.Add(new AuthorizeFilter(policy));
+		})
+		.AddFluentValidation(config =>                 
       	{
         	config.RegisterValidatorsFromAssemblyContaining<Create>();
       	});
@@ -47,7 +52,7 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        // This was added when middleware was created (108). Replaces app.UseDeveloperExceptionPage();
+        // This replaces app.UseDeveloperExceptionPage() which was previously here;
         app.UseMiddleware<ExceptionMiddleware>();        
 
         if (env.IsDevelopment())
@@ -62,6 +67,7 @@ public class Startup
 
         app.UseCors("CorsPolicy"); 
 
+		app.UseAuthentication();	// NOTE: This always must be before app.UseAuthorization()
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
@@ -69,5 +75,6 @@ public class Startup
             endpoints.MapControllers();
         });
     }
+	
 }
 

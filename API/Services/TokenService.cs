@@ -2,12 +2,19 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services;
 
 public class TokenService
 {
+	private readonly IConfiguration _config;
+	public TokenService(IConfiguration config)
+	{
+		_config = config;
+	}
+
 	// TokenService should be injected into IdentityServiceExtensions and will then be able to be
 	// used in AccountController and elsewhere
 	public string CreateToken(AppUser user)
@@ -23,7 +30,7 @@ public class TokenService
 
 		// Define token key and credentials and a descriptor containing all info contained in
 		// the token (subject, expiration date, signing credentials, refresh token, etc.)
-		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("unhidden test key"));
+		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKeyTest"]));
 		var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
 		var tokenDescriptor = new SecurityTokenDescriptor
