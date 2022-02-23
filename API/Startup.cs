@@ -40,7 +40,8 @@ public class Startup
         	config.RegisterValidatorsFromAssemblyContaining<Create>();
       	});
 		// Services have been moved to API/Extensions/ApplicationServiceExtensions.cs
-		services.AddApplicationServices(_config);   
+		services.AddApplicationServices(_config);  
+		services.AddIdentityServices(_config); 
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

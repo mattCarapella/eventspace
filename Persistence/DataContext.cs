@@ -1,9 +1,10 @@
 using Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
-public class DataContext : DbContext      // This means DataContext is derived from DbContext
+public class DataContext : IdentityDbContext<AppUser> 
 {
 	// DbContext instance represents a session with the DB and can be used to query and save instances of entities.
   	// Typically, you create a class that derives from DbContext and contains DbSet<Entity> properties for each entity in the model.
@@ -11,7 +12,7 @@ public class DataContext : DbContext      // This means DataContext is derived f
   
 	public DataContext(DbContextOptions options) : base(options)
 	{
-		// Constructor... base is constructor inside DbContext class we're deriving from
+
 	}
 
 
