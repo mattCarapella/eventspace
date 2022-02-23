@@ -1,10 +1,28 @@
 using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence;
 public class Seed
 {
-    public static async Task SeedData(DataContext context)
+    public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
     {
+		// Check for users in database to avoid repetition.
+		if (!userManager.Users.Any())
+		{
+			var users = new List<AppUser>
+			{
+				new AppUser{DisplayName = "Bob", UserName = "bob", Email = "bob@test.com"},
+				new AppUser{DisplayName = "Joe", UserName = "joe", Email = "joe@test.com"},
+				new AppUser{DisplayName = "Amanda", UserName = "amanda", Email = "amanda@test.com"}
+			};
+
+			foreach (var user in users)
+			{
+				// Creates and saves user. No need to save separately.
+				await userManager.CreateAsync(user, "Pa$$w0rd");
+			}
+		}
+
         if (context.Events.Any()) return;
         
         var events = new List<Event>
@@ -12,11 +30,14 @@ public class Seed
             new Event
             {
                 Name = "Eric Prydz",
-                Date = DateTime.Now.AddMonths(-2),
-                Description = "Event 2 months ago",
+                Date = DateTime.Now,
+				EndDate = DateTime.Now,
+                Description = "Eric Prydz, also known by his aliases Pryda and Cirez D among a number of others, is a Swedish DJ, record producer, and musician. He rose to fame with his 2004 hit single \"Call on Me\", and saw continued chart success with \"Proper Education\" in 2007, and \"Pjanoo\" in 2008.",
                 Cost = 35.00F,
+				CostMax = 110.00F,
                 TicketLink = "http://www.eventpage.com",
                 Category = "music",
+				EventType = null,
                 Likes = 0,
                 Genre = "Tech House",
                 Venue = "Town Ballroom",
@@ -32,7 +53,7 @@ public class Seed
             {
                 Name = "Kundalini Yoga for Beginners",
                 Date = DateTime.Now.AddMonths(-1),
-                Description = "Event 1 month ago",
+                Description = "Register for beginner yoga classes that will focus on unleashing your kundalini all month. Learn, grow, and breathe in a positive group environment where all supplies are provided.",
                 Cost = 0.00F,
                 TicketLink = "http://www.eventpage.com",
                 Category = "fitness",

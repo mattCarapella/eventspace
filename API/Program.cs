@@ -14,10 +14,13 @@ public class Program
 
         try
         {
-            var context = services.GetRequiredService<DataContext>();  // This was added as a service in Startup.cs
+			// Services are defined in API/Extensions
+            var context = services.GetRequiredService<DataContext>(); 
+			var userManager = services.GetRequiredService<UserManager<AppUser>>();
             // Migrate database (Migrate() also creates a DB if one does not exist) and seed data upon initial start up. 
-            await context.Database.MigrateAsync();     
-            await Seed.SeedData(context);
+            await context.Database.MigrateAsync();    
+			// Seed data. 
+            await Seed.SeedData(context, userManager);
         }
         catch (Exception ex)
         {
