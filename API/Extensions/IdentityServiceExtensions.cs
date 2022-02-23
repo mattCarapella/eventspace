@@ -1,3 +1,4 @@
+using API.Services;
 using Microsoft.Extensions.Configuration;
 
 namespace API.Extensions;
@@ -16,7 +17,9 @@ public static class IdentityServiceExtensions
 		.AddSignInManager<SignInManager<AppUser>>();
 
 		services.AddAuthentication();
+		services.AddScoped<TokenService>();
 
 		return services;
 	}
+	
 }
