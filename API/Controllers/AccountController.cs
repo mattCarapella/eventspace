@@ -1,6 +1,7 @@
 using API.DTOs;
 using API.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers;
 
@@ -20,21 +21,21 @@ public class AccountController : ControllerBase
 		_userManager = userManager;
 	}
 
-	[AllowAnonymous]	// Whatever this is applied to does not require authorization
+	[AllowAnonymous]		// Whatever this is applied to does not require authorization
 	[HttpPost("login")]
 	public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
 	{
-		// Gets the user, if any, associated with the normalized value of the specified email address. Note: Its 
-		// recommended that identityOptions.User.RequireUniqueEmail be set to true when using this method, otherwise 
-		// the store may throw if there are users with duplicate emails.
+		// Gets the user, if any, associated with the normalized value of the specified email address. 
+		// Note: Its recommended that identityOptions.User.RequireUniqueEmail be set to true when using 
+		// this method, otherwise the store may throw if there are users with duplicate emails.
 		var user = await _userManager.FindByEmailAsync(loginDTO.Email);
 
 		// If user email is not found return 401 response, else sign in using password from LoginDTO.
 		if (user == null) return Unauthorized();
 		var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
 
-		// Sends back user data as UserDTO if user is found and authorized, otherwise a 401 response. The
-		// token is created in Services/TokenService.cs
+		// Sends back user data as UserDTO if user is found and authorized, otherwise a 401 response. 
+		// The token is created in Services/TokenService.cs
 		if (result.Succeeded)
 		{
 			return CreateUserObject(user);
@@ -64,11 +65,21 @@ public class AccountController : ControllerBase
 		};
 		var result = await _userManager.CreateAsync(user, registerDTO.Password);
 
-		// Returns UserDTO to log the user in on success. Returns 401 response otherwise.
+		// Returns UserDTO to log the user in on success or 401 response on failure.
 		if (result.Succeeded) {
 			return CreateUserObject(user);
 		}
 		return BadRequest("Problem registering new user.");
+	}
+
+	[Authorize]
+	[HttpGet]
+	public async Task<ActionResult<UserDTO>> GetCurrentUser()
+	{
+		// The User passed to FindByEmailAsync() is the System.Security.Claims.ClaimsPrincipal 
+		// for user associated with the executing action.
+		var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+		return CreateUserObject(user);
 	}
 
 
