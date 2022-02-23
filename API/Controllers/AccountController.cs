@@ -20,7 +20,7 @@ public class AccountController : ControllerBase
 		_userManager = userManager;
 	}
 
-	[AllowAnonymous]
+	[AllowAnonymous]	// Whatever this is applied to does not require authorization
 	[HttpPost("login")]
 	public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
 	{
@@ -37,15 +37,50 @@ public class AccountController : ControllerBase
 		// token is created in Services/TokenService.cs
 		if (result.Succeeded)
 		{
-			return new UserDTO
-			{
-				DisplayName = user.DisplayName,
-				Image = null,
-				Token = _tokenService.CreateToken(user),
-				Username = user.UserName
-			};
+			return CreateUserObject(user);
 		}
 		return Unauthorized();
+	}
+
+	[AllowAnonymous]
+	[HttpPost("signup")]
+	public async Task<ActionResult<UserDTO>> SignUp(RegisterDTO registerDTO)
+	{
+		// Confirm that email and username are not in use
+		if (await _userManager.Users.AnyAsync(u => u.Email == registerDTO.Email))
+		{
+			return BadRequest("Email is taken.");
+		}
+		if (await _userManager.Users.AnyAsync(u => u.UserName == registerDTO.Username))
+		{
+			return BadRequest("Username is taken.");
+		}
+
+		// Create and save the new user.
+		var user = new AppUser{
+			DisplayName = registerDTO.DisplayName,
+			UserName = registerDTO.Username,
+			Email = registerDTO.Email
+		};
+		var result = await _userManager.CreateAsync(user, registerDTO.Password);
+
+		// Returns UserDTO to log the user in on success. Returns 401 response otherwise.
+		if (result.Succeeded) {
+			return CreateUserObject(user);
+		}
+		return BadRequest("Problem registering new user.");
+	}
+
+
+	private UserDTO CreateUserObject(AppUser user) 
+	{
+		return new UserDTO
+		{
+			DisplayName = user.DisplayName,
+			Image = null,
+			Token = _tokenService.CreateToken(user),
+			Username = user.UserName
+		};
 	}
 
 }
