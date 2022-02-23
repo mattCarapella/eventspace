@@ -1,7 +1,8 @@
 import React from'react';
-import { observer } from 'mobx-react-lite';
+import {observer} from 'mobx-react-lite';
 import {Segment, Grid, Icon} from 'semantic-ui-react'
-import { Event } from '../../../app/models/event';
+import {Event} from '../../../app/models/event';
+import {format} from 'date-fns';
 
 interface Props {
   event: Event;
@@ -26,7 +27,7 @@ export default observer(function EventDetailsInfo({event}: Props) {
             <Icon name='calendar alternate' size='large' color='teal' />
           </Grid.Column>
           <Grid.Column width={15}>
-            <span>{event.date}</span>
+            <span>{format(event.date!, 'MMMM d, yyyy h:mm aa')}</span>
           </Grid.Column>
         </Grid>
       </Segment>

@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
 import { Button, Grid, Icon, Item, Segment } from 'semantic-ui-react';
 import { Event } from '../../../app/models/event';
+import {format} from 'date-fns';
 
 interface Props {
   event: Event;
@@ -24,7 +25,7 @@ export default observer(function EventListItem({event}: Props) {
       </Segment>
       <Segment>
         <span>
-          <Icon name='clock'/>{event.date}
+          <Icon name='clock'/>{format(event.date!, 'MMMM d, yyyy h:mm aa')}
           <Icon name='marker'/>{event.venue}
         </span>
       </Segment>

@@ -1,6 +1,7 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import {makeAutoObservable, runInAction} from "mobx";
 import agent from "../api/agent";
 import { Event } from "../models/event";
+import {format} from 'date-fns';
 
 export default class EventStore {
   
@@ -21,14 +22,14 @@ export default class EventStore {
 
   get eventsByDate() {
     return Array.from(this.eventsRegistry.values()).sort((a,b) => 
-        Date.parse(a.date) - Date.parse(b.date));
+      a.date!.getTime() - b.date!.getTime());
   }
 
   get eventsByDateGroup() {
     // returns events grouped by date as key value pair <date: string, events: Event[]>
     return Object.entries(
       this.eventsByDate.reduce((events, event) => {
-        const date = event.date;
+        const date = format(event.date!, 'MMMM d, yyyy');
         events[date] = events[date] ? [...events[date], event] : [event];
         return events;
       }, {} as {[key: string]: Event[]})
@@ -81,7 +82,7 @@ export default class EventStore {
   }
 
   private setEvent = (event: Event) => {
-    event.date = event.date.split('T')[0];
+    event.date = new Date(event.date!);
     this.eventsRegistry.set(event.id, event);
   }
 
@@ -169,4 +170,30 @@ export default class EventStore {
 
   // closeForm = () => {
   //   this.editMode = false;
+  // }
+
+
+
+
+  // This was changed in 124 to change date type from string to Date
+
+  // private setEvent = (event: Event) => {
+  //   event.date = event.date.split('T')[0];
+  //   this.eventsRegistry.set(event.id, event);
+  // }
+
+  // get eventsByDate() {
+  //   return Array.from(this.eventsRegistry.values()).sort((a,b) => 
+  //       Date.parse(a.date) - Date.parse(b.date));
+  // }
+
+  // get eventsByDateGroup() {
+  //   // returns events grouped by date as key value pair <date: string, events: Event[]>
+  //   return Object.entries(
+  //     this.eventsByDate.reduce((events, event) => {
+  //       const date = event.date;
+  //       events[date] = events[date] ? [...events[date], event] : [event];
+  //       return events;
+  //     }, {} as {[key: string]: Event[]})
+  //   )
   // }

@@ -1,9 +1,9 @@
 export interface Event {
   id: string;
   name: string;
-  date: string;
+  date: Date | null;
   description: string;
-  // cost: number;
+  cost: number | null;
   ticketLink: string;
   category: string;
   // likes: number;

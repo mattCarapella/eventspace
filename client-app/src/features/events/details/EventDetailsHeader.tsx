@@ -1,6 +1,8 @@
 import React from'react';
-import { Button, Header, Image, Item, Segment } from 'semantic-ui-react';
-import { Event } from '../../../app/models/event';
+import {Link} from 'react-router-dom';
+import {Button, Header, Image, Item, Segment} from 'semantic-ui-react';
+import {Event} from '../../../app/models/event';
+import {format} from 'date-fns';
 
 const eventImageStyle = {
   filter: 'brightness(30%)'
@@ -29,7 +31,7 @@ export default function EventDetailsHeader({event}: Props) {
             <Item>
               <Item.Content>
                 <Header content={event.name} size='huge' style={{color: 'white'}} />
-                <p>{event.date}</p>
+                <p>{format(event.date!, 'MMMM d, yyyy h:mm aa')}</p>
                 <p>Hosted by <strong>[username]</strong></p>
               </Item.Content>
             </Item>
@@ -39,7 +41,7 @@ export default function EventDetailsHeader({event}: Props) {
       <Segment clearing attached='bottom'>
         <Button color='teal'>Attend</Button>
         <Button>Cancel</Button>
-        <Button color='blue' floated='right'>Manage Event</Button>
+        <Button as={Link} to={`/edit/${event.id}`} color='blue' floated='right'>Edit Event</Button>
       </Segment>
     </Segment.Group>
   );
