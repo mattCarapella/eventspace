@@ -59,14 +59,3 @@ public class Create
 	}
 
 }
-
-
-// THIS IS THE HANDLE METHOD PRIOR TO ADDING EVENTATTENDEES FUNCTIONALITY...
-// public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
-// {
-// 	_context.Events.Add(request.Event);
-// 	var result = await _context.SaveChangesAsync() > 0;
-
-// 	if (!result) return Result<Unit>.Failure("Failed to create event.");
-// 	return Result<Unit>.Success(Unit.Value);
-// }
