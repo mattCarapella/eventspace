@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import { Event } from '../models/event';
+import { User, UserFormValues } from '../models/user';
 import { store } from '../stores/store';
 
 const sleep = (delay: number) => {
@@ -65,22 +66,29 @@ axios.interceptors.response.use(async response => {
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 
 const requests = {
-  get: <T>(url: string) => axios.get<T>(url).then(responseBody),
-  post: <T>(url: string, body: {}) => axios.post<T>(url, body).then(responseBody),
-  put: <T>(url: string, body: {}) => axios.put<T>(url, body).then(responseBody),
-  del: <T>(url: string) => axios.delete<T>(url).then(responseBody),
+	get: <T>(url: string) => axios.get<T>(url).then(responseBody),
+	post: <T>(url: string, body: {}) => axios.post<T>(url, body).then(responseBody),
+	put: <T>(url: string, body: {}) => axios.put<T>(url, body).then(responseBody),
+	del: <T>(url: string) => axios.delete<T>(url).then(responseBody),
 }
 
 const Events = {
-  list: () => requests.get<Event[]>('/events'),
-  details: (id: string) => requests.get<Event>(`/events/${id}`),
-  create: (event: Event) => axios.post<void>('/events', event),
-  update: (event: Event) => axios.put<void>(`/events/${event.id}`, event),
-  delete: (id: string) => axios.delete<void>(`/events/${id}`)
+	list: () => requests.get<Event[]>('/events'),
+	details: (id: string) => requests.get<Event>(`/events/${id}`),
+	create: (event: Event) => axios.post<void>('/events', event),
+	update: (event: Event) => axios.put<void>(`/events/${event.id}`, event),
+	delete: (id: string) => axios.delete<void>(`/events/${id}`)
+}
+
+const Account = {
+	current: () => requests.get<User>('/account'),
+	login: (user: UserFormValues) => requests.post<User>('/account/login', user),
+	signup: (user: UserFormValues) => requests.post<User>('/account/signup', user)
 }
 
 const agent = {
-  Events
+	Events,
+	Account
 }
 
 export default agent;

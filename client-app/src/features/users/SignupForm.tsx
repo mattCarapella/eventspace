@@ -11,7 +11,7 @@ export default function SignupForm() {
 		>
 			{({handleSubmit}) => (
 				<Form className='ui form' autoComplete='off'>
-					<CustomTextInput name='displayName' placeholder='Display Name' />
+					<CustomTextInput name='displayname' placeholder='Display Name' />
 					<CustomTextInput name='username' placeholder='Username' />
 					<CustomTextInput name='email' placeholder='Email' />
 					<CustomTextInput name='password' placeholder='Password' />

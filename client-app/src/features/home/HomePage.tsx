@@ -14,7 +14,7 @@ export default function HomePage() {
         <Button as={Link} to='/events' size='huge' inverted>
           Explore Events
         </Button>
-		<Button as={Link} to='/signin' size='huge' inverted>
+		<Button as={Link} to='/login' size='huge' inverted>
           Sign In
         </Button>
 			</Container>
