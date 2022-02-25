@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace API.Controllers;
 
+[AllowAnonymous]
 public class EventsController : BaseApiController
 {
   	// Returns all events
