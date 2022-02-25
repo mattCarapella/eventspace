@@ -1,7 +1,7 @@
 import { ErrorMessage, Form, Formik } from 'formik';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { Button, Label } from 'semantic-ui-react';
+import { Button, Header, Label } from 'semantic-ui-react';
 import CustomTextInput from '../../app/common/form/CustomTextInput';
 import { useStore } from '../../app/stores/store';
 
@@ -15,6 +15,7 @@ export default observer(function LoginForm() {
 		>
 			{({handleSubmit, isSubmitting, errors}) => (
 				<Form className='ui form' autoComplete='off'>
+					<Header as='h1' content='Log In' textAlign='center' style={{marginBottom: 20}} />
 					<CustomTextInput name='email' placeholder='Email' />
 					<CustomTextInput name='password' placeholder='Password' type='password' />
 					<ErrorMessage name='error' render={() =>

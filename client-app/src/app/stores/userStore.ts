@@ -26,8 +26,21 @@ export default class UserStore {
 			// Store token in local storage, user in store
 			store.commonStore.setToken(user.token);
 			this.setUser(user);
-			// Redirect logged in user to events page
 			history.push('/events');
+			store.modalStore.closeModal();
+
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	signup = async (creds: UserFormValues) => {
+		try {
+			const user = await agent.Account.signup(creds);
+			store.commonStore.setToken(user.token);
+			this.setUser(user);
+			history.push('/events');
+			store.modalStore.closeModal();
 
 		} catch (error) {
 			throw error;

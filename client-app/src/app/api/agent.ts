@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { config } from 'process';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import { Event } from '../models/event';

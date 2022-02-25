@@ -48,13 +48,17 @@ public class AccountController : ControllerBase
 	public async Task<ActionResult<UserDTO>> SignUp(RegisterDTO registerDTO)
 	{
 		// Confirm that email and username are not in use
-		if (await _userManager.Users.AnyAsync(u => u.Email == registerDTO.Email))
+		if (await _userManager.Users.AnyAsync(x => x.NormalizedEmail == registerDTO.Email.ToUpper()))
 		{
-			return BadRequest("Email is taken.");
+			//return BadRequest("That email is taken.");
+			ModelState.AddModelError("email", "Email is taken.");
+			return ValidationProblem();
 		}
-		if (await _userManager.Users.AnyAsync(u => u.UserName == registerDTO.Username))
+		if (await _userManager.Users.AnyAsync(x => x.NormalizedUserName == registerDTO.Username.ToUpper()))
 		{
-			return BadRequest("Username is taken.");
+			// return BadRequest("That username is taken.");
+			ModelState.AddModelError("username", "Username is taken."); 
+			return ValidationProblem();
 		}
 
 		// Create and save the new user.
@@ -69,7 +73,9 @@ public class AccountController : ControllerBase
 		if (result.Succeeded) {
 			return CreateUserObject(user);
 		}
-		return BadRequest("Problem registering new user.");
+		// return BadRequest("Problem registering new user.");
+		ModelState.AddModelError("badRequest", "Problem registering new user.");
+		return ValidationProblem();
 	}
 
 	[Authorize]
