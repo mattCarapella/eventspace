@@ -4,6 +4,8 @@ using Microsoft.OpenApi.Models;
 using AutoMapper;
 using Application.Core;
 using Application.Events;
+using Application.Interfaces;
+using Infrastructure.Security;
 
 namespace API.Extensions;
 
@@ -15,6 +17,7 @@ public static class ApplicationServiceExtensions
 		{
 			c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
 		});
+		
 		// AddDbContext comes from entity framework
 		services.AddDbContext<DataContext>(opt =>
 		{
@@ -22,6 +25,7 @@ public static class ApplicationServiceExtensions
 			// Connection string comes from _config in constructor and is defined in /API/appsettings.Development.json
 			opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
 		});
+		
 		services.AddCors(opt => 
 		{
 			opt.AddPolicy("CorsPolicy", policy =>
@@ -29,8 +33,12 @@ public static class ApplicationServiceExtensions
 				policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
 			});
 		});
+		
 		services.AddMediatR(typeof(List.Handler).Assembly);
+		
 		services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
+		services.AddScoped<IUserAccessor, UserAccessor>();
 
 		return services;
 	}
