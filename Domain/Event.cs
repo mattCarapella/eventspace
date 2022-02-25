@@ -25,6 +25,7 @@ public class Event
     public string Zipcode { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+	public ICollection<EventAttendee> Attendees { get; set; } = new List<EventAttendee>();
 
 	// public ICollection<Photo> Photos { get; set; }
 	// public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
