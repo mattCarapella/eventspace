@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { config } from 'process';
 import { toast } from 'react-toastify';
 import { history } from '../..';
 import { Event } from '../models/event';
@@ -16,28 +17,36 @@ axios.defaults.baseURL = 'http://localhost:5000/api';
 
 // Interceptors can intercept requests or responses before they're handled and perform operations
 
+
+// Every time a request is made, check to see if there is a token and if there is include in the auth header
+axios.interceptors.request.use(config => {
+	const token = store.commonStore.token;
+	if (token) config.headers.Authorization = `Bearer ${token}`;
+	return config;
+});
+
 axios.interceptors.response.use(async response => {
-  // Do something before request is sent. Any status code that lie within the range of 2xx cause this function to trigger
-  await sleep(1000);
-  return response;
+	// Do something before request is sent. Any status code that lie within the range of 2xx cause this function to trigger
+	await sleep(1000);
+	return response;
 }, (error: AxiosError) => {
-  // Do something with response error. Any status codes that falls outside the range of 2xx cause this function to trigger
-  const {data, status, config} = error.response!; // we can use ! here as we know there will always be an error
-  switch(status) {
-    case 400: 
-      if (typeof data === 'string') {
-        toast.error(data);
-      }
-      if (config.method === 'get' && data.errors.hasOwnProperty('id')) {							// ******* UPDATE THIS 114
-        history.push('/not-found');
-      }
-      // toast.error('Bad Request');
-      if (data.errors) {
+	// Do something with response error. Any status codes that falls outside the range of 2xx cause this function to trigger
+	const {data, status, config} = error.response!; // we can use ! here as we know there will always be an error
+	switch(status) {
+    	case 400: 
+      		if (typeof data === 'string') {
+        		toast.error(data);
+      		}
+			if (config.method === 'get' && data.errors.hasOwnProperty('id')) {
+				// Bad GUID
+				history.push('/not-found');
+			}
+			if (data.errors) {
 				// Validation error response
 				const modalStateErrors = [];
 				// loop over all errors, push them into array then flatten the array to we see the validation error strings rather than objects
 				for (const key in data.errors) {
-        	if (data.errors[key]) {
+					if (data.errors[key]) {
 						modalStateErrors.push(data.errors[key]);
 					}
 				}
@@ -45,23 +54,21 @@ axios.interceptors.response.use(async response => {
 			} else {
 				toast.error(data);
 			}
-      break;
-    case 401:
-      toast.error('Unauthorized');
-      break;
-    case 404:
-      //toast.error('Not Found');
-      history.push('/not-found'); // history is imported from index.tsx
-      break;
-    case 500:
-      // toast.error('Server Error');
-      store.commonStore.setServerError(data);
-      history.push('/server-error');
-      break;
-  }
-  // Promise represents the end of a completed async operation
-  return Promise.reject(error);
-})
+			break;
+		case 401:
+			toast.error('Unauthorized');
+			break;
+    	case 404:
+			history.push('/not-found'); // history is imported from index.tsx
+			break;
+    	case 500:
+			store.commonStore.setServerError(data);
+			history.push('/server-error');
+			break;
+  	}
+	// Promise represents the end of a completed async operation
+	return Promise.reject(error);
+});
 
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 

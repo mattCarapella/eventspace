@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container } from 'semantic-ui-react'
 import Navbar from './Navbar';
 import EventDashboard from '../../features/events/dashboard/EventDashboard';
@@ -11,37 +11,50 @@ import TestErrors from '../../features/errors/TestErrors';
 import { ToastContainer } from 'react-toastify';
 import NotFound from '../../features/errors/NotFound';
 import ServerError from '../../features/errors/ServerError';
-import LoginForm from '../../features/users/LogninForm';
+import LoginForm from '../../features/users/LoginForm';
+import { useStore } from '../stores/store';
+import LoadingComponent from './LoadingComponent';
 
 function App() {
-  const location = useLocation();
- 
-  return (
-    <>
-      <ToastContainer position='bottom-right' hideProgressBar />
-      <Route exact path='/' component={HomePage} />
-      <Route
-        path={'/(.+)'} 
-        render = {() => (
-          <>
-            <Navbar />
-            <Container style={{ marginTop: '7em' }}>
-              <Switch>
-                <Route exact path='/' component={HomePage} />
-                <Route exact path='/events' component={EventDashboard} />
-                <Route path='/events/:id' component={EventDetails} />
-                <Route path={['/createEvent', '/edit/:id']} key={location.key} component={EventForm} />
-                <Route path='/errors' component={TestErrors} />
-                <Route path='/server-error' component={ServerError} />
-				<Route path='/login' component={LoginForm} />
-                <Route component={NotFound} />  
-              </Switch>
-            </Container>
-          </>
-        )}
-      />
-    </>
-  );
+	const location = useLocation();
+	const {userStore, commonStore} = useStore();
+
+	useEffect(() => {
+		if (commonStore.token) {
+			userStore.getUser().finally(() => commonStore.setAppLoaded());
+		} else {
+			commonStore.setAppLoaded();
+		}
+	}, [userStore, commonStore]);
+
+	if (!commonStore.appLoaded) return <LoadingComponent content='Loading...' />
+
+	return (
+		<>
+		<ToastContainer position='bottom-right' hideProgressBar />
+		<Route exact path='/' component={HomePage} />
+		<Route
+			path={'/(.+)'} 
+			render = {() => (
+			<>
+				<Navbar />
+				<Container style={{ marginTop: '7em' }}>
+				<Switch>
+					<Route exact path='/' component={HomePage} />
+					<Route exact path='/events' component={EventDashboard} />
+					<Route path='/events/:id' component={EventDetails} />
+					<Route path={['/createEvent', '/edit/:id']} key={location.key} component={EventForm} />
+					<Route path='/errors' component={TestErrors} />
+					<Route path='/server-error' component={ServerError} />
+					<Route path='/login' component={LoginForm} />
+					<Route component={NotFound} />  
+				</Switch>
+				</Container>
+			</>
+			)}
+		/>
+		</>
+	);
 }
 
 export default observer(App);

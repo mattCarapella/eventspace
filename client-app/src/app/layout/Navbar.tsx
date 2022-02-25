@@ -1,8 +1,11 @@
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Menu } from 'semantic-ui-react';
+import { Button, Container, Dropdown, Image, Menu } from 'semantic-ui-react';
+import { useStore } from '../stores/store';
 
-export default function Navbar() {
+export default observer(function Navbar() {
+	const {userStore: {user, logout}} = useStore();
   return (
     <Menu inverted borderless fixed='top'>
       <Container>
@@ -14,10 +17,19 @@ export default function Navbar() {
         <Menu.Item>
           <Button as={Link} to='/createEvent' positive content='Add an event' />
         </Menu.Item>
+		<Menu.Item>
+			<Image src={user?.image || '/assets/user.png'} avatar spaced='right' />
+			<Dropdown pointing='top left' text={user?.displayName}>
+				<Dropdown.Menu>
+					<Dropdown.Item as={Link} to={`/profile/${user?.username}`} text='My Profile' icon='user' />
+					<Dropdown.Item onClick={logout} text='Log Out' icon='power' />
+ 				</Dropdown.Menu>
+			</Dropdown>
+		</Menu.Item>
       </Container>
     </Menu>
-  )
-}
+  );
+});
 
 
 // <img src='/assets/logo.png' alt='logo' style={{ marginRight: '10px' }} />
