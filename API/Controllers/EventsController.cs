@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace API.Controllers;
 
-[AllowAnonymous]
 public class EventsController : BaseApiController
 {
   	// Returns all events
@@ -31,6 +30,7 @@ public class EventsController : BaseApiController
 		return HandleResult(await Mediator.Send(new Create.Command{Event = e}));
 	}
 
+	[Authorize(Policy = "IsEventHost")]		// Policy defined in IdentityServiceExtensions.cs (API/Extensions) and IsHostRequirement.cs (Infrastructure/Security)
 	[HttpPut("{id}")]
 	public async Task<IActionResult> EditEvent(Guid id, Event e)
 	{
@@ -38,6 +38,7 @@ public class EventsController : BaseApiController
 		return HandleResult(await Mediator.Send(new Edit.Command{Event = e}));
 	}
 
+	[Authorize(Policy = "IsEventHost")]
 	[HttpDelete("{id}")]
 	public async Task<IActionResult> DeleteEvent(Guid id)
 	{

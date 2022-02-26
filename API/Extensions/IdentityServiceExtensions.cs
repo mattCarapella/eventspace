@@ -1,5 +1,6 @@
 using System.Text;
 using API.Services;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -37,6 +38,16 @@ public static class IdentityServiceExtensions
                 };
 			});
 		
+		services.AddAuthorization(opt => 
+		{
+			opt.AddPolicy("IsEventHost", policy => 
+			{
+				policy.Requirements.Add(new IsHostRequirement());
+			});
+		});
+
+		services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
+
 		// AddScoped() scopes the service (the token here) to the lifetime of the HTTP request
 		services.AddScoped<TokenService>();
 
