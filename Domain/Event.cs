@@ -23,6 +23,7 @@ public class Event
     public string State { get; set; }
 	public string Country { get; set; }
     public string Zipcode { get; set; }
+	public bool IsCancelled { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 	public ICollection<EventAttendee> Attendees { get; set; } = new List<EventAttendee>();
