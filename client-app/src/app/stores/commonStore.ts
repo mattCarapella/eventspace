@@ -10,9 +10,9 @@ export default class CommonStore {
 	constructor() {
 		makeAutoObservable(this);
 
-		// Reaction will change any time that there is a change to token
+		// reaction is run any time there's a change to token
 		reaction(
-			() => this.token,
+			() => this.token, 
 			token => {
 				if (token) {
 					window.localStorage.setItem('jwt', token);
@@ -21,7 +21,6 @@ export default class CommonStore {
 				}
 			}
 		);
-
 	}
 
 	// ACTIONS

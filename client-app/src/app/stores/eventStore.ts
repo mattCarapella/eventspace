@@ -38,6 +38,8 @@ export default class EventStore {
 		)
 	}
 
+	
+
   // ACTIONS:
 
   	loadEvents = async () => {
@@ -91,6 +93,10 @@ export default class EventStore {
 		}
 		event.date = new Date(event.date!);
 		this.eventsRegistry.set(event.id, event);
+	}
+
+	clearEvents = () => {
+		this.eventsRegistry.clear();
 	}
 
 	setSelectedEvent = (event: Event) => {

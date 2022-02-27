@@ -23,7 +23,7 @@ export default observer(function SignupForm() {
 			})}
 		>
 			{({handleSubmit, isSubmitting, errors, isValid, dirty}) => (
-				<Form className='ui form error' autoComplete='off'>
+				<Form onSubmit={handleSubmit} className='ui form error' autoComplete='off'>
 					<Header as='h1' content='Sign Up for EventTime' textAlign='center' style={{marginBottom: 20}} />
 					<CustomTextInput name='displayName' placeholder='Display Name' />
 					<CustomTextInput name='username' placeholder='Username' />
@@ -32,13 +32,13 @@ export default observer(function SignupForm() {
 					<ErrorMessage name='error' render={() =>
 						<ValidationErrors errors={errors.error}/>
 					} />
-					<Button 
+					<Button
+						type='submit' 
+						content='Sign Up'  
+						positive 
+						fluid 
 						disabled={!isValid || !dirty || isSubmitting}
 						loading={isSubmitting} 
-						positive 
-						content='Sign Up' 
-						type='submit' 
-						fluid 
 					/>
 				</Form>
 			)}

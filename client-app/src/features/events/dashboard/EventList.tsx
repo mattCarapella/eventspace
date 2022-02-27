@@ -6,8 +6,8 @@ import EventListItem from './EventListItem';
 
 export default observer(function EventList() {
 
-  const {eventStore} = useStore();
-  const {eventsByDateGroup} = eventStore;
+  const {eventStore: {eventsByDateGroup}} = useStore();
+//   const {eventsByDateGroup} = eventStore;
   
   return (
     <>

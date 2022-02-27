@@ -14,14 +14,20 @@ export default observer(function LoginForm() {
 				setErrors({error: 'Invalid credentials. Please try again.'}))}
 		>
 			{({handleSubmit, isSubmitting, errors}) => (
-				<Form className='ui form' autoComplete='off'>
+				<Form onSubmit={handleSubmit} className='ui form' autoComplete='off'>
 					<Header as='h1' content='Log In' textAlign='center' style={{marginBottom: 20}} />
 					<CustomTextInput name='email' placeholder='Email' />
 					<CustomTextInput name='password' placeholder='Password' type='password' />
 					<ErrorMessage name='error' render={() =>
 						<Label style={{marginBottom: 10}} basic color='red' content={errors.error} />
 					} />
-					<Button loading={isSubmitting} positive content='Log In' type='submit' fluid />
+					<Button 
+						type='submit'
+						content='Log In'
+						positive
+						fluid
+						loading={isSubmitting}  
+					/>
 				</Form>
 			)}
 		</Formik>

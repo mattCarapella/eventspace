@@ -12,7 +12,6 @@ import { Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 
 // This allows history object to be used not only in App. Import must be manually added. 
-// It is used by changing BrowserRouter to Router in the render and passing in history (added in section 111)
 export const history = createBrowserHistory();
 
 ReactDOM.render(

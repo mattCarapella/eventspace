@@ -19,7 +19,7 @@ import SignupForm from '../../features/users/SignupForm';
 
 function App() {
 	const location = useLocation();
-	const {userStore, commonStore} = useStore();
+	const {commonStore, userStore} = useStore();
 
 	useEffect(() => {
 		if (commonStore.token) {
@@ -27,32 +27,31 @@ function App() {
 		} else {
 			commonStore.setAppLoaded();
 		}
-	}, [userStore, commonStore]);
+	}, [commonStore, userStore]);
 
-	if (!commonStore.appLoaded) return <LoadingComponent content='Loading...' />
+	if (!commonStore.appLoaded) return <LoadingComponent content='Loading...'/>
 
 	return (
 		<>
-		<ToastContainer position='bottom-right' hideProgressBar />
+		<ToastContainer position='bottom-right' hideProgressBar/>
 		<ModalContainer />
-		<Route exact path='/' component={HomePage} />
+		<Route exact path='/' component={HomePage}/>
 		<Route
 			path={'/(.+)'} 
 			render = {() => (
 			<>
 				<Navbar />
-				<Container style={{ marginTop: '7em' }}>
-				<Switch>
-					<Route exact path='/' component={HomePage} />
-					<Route exact path='/events' component={EventDashboard} />
-					<Route path='/events/:id' component={EventDetails} />
-					<Route path={['/createEvent', '/edit/:id']} key={location.key} component={EventForm} />
-					<Route path='/errors' component={TestErrors} />
-					<Route path='/server-error' component={ServerError} />
-					<Route path='/login' component={LoginForm} />
-					<Route path='/signup' component={SignupForm} />
-					<Route component={NotFound} />  
-				</Switch>
+				<Container style={{marginTop: '7em'}}>
+					<Switch>
+						<Route exact path='/events' component={EventDashboard}/>
+						<Route path='/events/:id' component={EventDetails}/>
+						<Route path={['/createEvent', '/edit/:id']} key={location.key} component={EventForm} />
+						<Route path='/errors' component={TestErrors}/>
+						<Route path='/server-error' component={ServerError}/>
+						<Route path='/login' component={LoginForm}/>
+						<Route path='/signup' component={SignupForm}/>
+						<Route component={NotFound}/>  
+					</Switch>
 				</Container>
 			</>
 			)}

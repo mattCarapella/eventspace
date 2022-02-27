@@ -12,11 +12,11 @@ import CustomTextArea from '../../../app/common/form/CustomTextArea';
 import CustomSelectInput from '../../../app/common/form/CustomSelectInput';
 import { categoryOptions } from '../../../app/common/options/categoryOptions';
 import CustomDateInput from '../../../app/common/form/CustomDateInput';
-import { Event, EventFormValues } from '../../../app/models/event';
+import { EventFormValues } from '../../../app/models/event';
 
 export default observer(function EventForm() {
 	const {eventStore} = useStore();
-	const {loadingInitial, loading, loadEvent, createEvent, updateEvent} = eventStore;
+	const {loadingInitial, loadEvent, createEvent, updateEvent} = eventStore;
 	const {id} = useParams<{id: string}>();
 	let history = useHistory();
 
@@ -74,15 +74,11 @@ export default observer(function EventForm() {
 								timeCaption='time'
 								dateFormat='MMMM d, yyyy, h:mm aa' 
 							/>
-							<CustomSelectInput 
-								name='category' 
-								placeholder='Category' 
-								options={categoryOptions}
-							/>
+							<CustomSelectInput name='category' placeholder='Category' options={categoryOptions}/>
 
 							<Header content='Ticket details' sub color='teal' />
-							<CustomTextInput name='cost' placeholder='Cost'/>
 							<CustomTextInput name='ticketLink' placeholder='Ticket Link'/>
+							<CustomTextInput name='cost' placeholder='Cost'/>
 							<CustomTextInput name='maxCost' placeholder='Maximum Cost'/>
 							<CustomTextInput name='numberOfTickets' placeholder='Number of Tickets Available'/>
 							
@@ -94,19 +90,19 @@ export default observer(function EventForm() {
 							<CustomTextInput name='zipcode' placeholder='Zipcode'/>
 							<CustomTextInput name='country' placeholder='Country'/>
 							<Button 
+								content='Submit'
+								type='submit' 
 								loading={isSubmitting} 
+								disabled={isSubmitting || !isValid}
 								floated='right' 
 								positive 
-								disabled={isSubmitting || !isValid}
-								type='submit' 
-								content='Submit'
 							/>
 							<Button 
 								as={Link} 
 								to='/events' 
-								floated='right' 
-								type='button' 
 								content='Cancel'
+								type='button' 
+								floated='right' 
 							/>
 						</Form>
 					)}
