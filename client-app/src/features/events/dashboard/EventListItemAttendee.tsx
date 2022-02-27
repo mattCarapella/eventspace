@@ -17,7 +17,7 @@ export default observer(function EventListItem({attendees}: Props) {
 						src={attendee.image || '/assets/user.png'} 
 						circular 
 						size='mini' 
-						style={{marginBottom: 5}} 
+						
 					/>
 				</List.Item>
 			))}

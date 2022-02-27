@@ -1,6 +1,6 @@
 import {makeAutoObservable, runInAction} from "mobx";
 import agent from "../api/agent";
-import { Event } from "../models/event";
+import { Event, EventFormValues } from "../models/event";
 import {format} from 'date-fns';
 import { store } from "./store";
 import { Profile } from "../models/profile";
@@ -101,36 +101,40 @@ export default class EventStore {
 		this.loadingInitial = state;
 	}
 
-	createEvent = async (event: Event) => {
-		this.loading = true;
+	createEvent = async (event: EventFormValues) => {
+		// get current user
+		const currUser = store.userStore.user;
+		// create new event attendee profile object
+		const attendee = new Profile(currUser!);
 		try {
+			// make request to API
 			await agent.Events.create(event);
+			// populate activity properties with those in EventFormValues
+			const newEvent = new Event(event);
+			// set other activity properties, setActivity() also updates eventyRegistry
+			newEvent.hostUsername = currUser!.username;
+			newEvent.attendees = [attendee];
+			this.setEvent(newEvent);
 			runInAction(() => {
-				this.eventsRegistry.set(event.id, event);
-				this.selectedEvent = event;
-				this.editMode = false;
-				this.loading = false;
+				// set event in store
+				this.selectedEvent = newEvent;
 			});
-		} catch (error) {
-			console.log(error);
-			runInAction(() => { this.loading = false; });
-		}
+		} catch (error) { console.log(error); }
 	}
 
-	updateEvent = async (event: Event) => {
-		this.loading = true;
+	updateEvent = async (event: EventFormValues) => {
 		try {
+			// send request to API with EventFormValues properties
 			await agent.Events.update(event);
 			runInAction(() => {
-				this.eventsRegistry.set(event.id, event);
-				this.selectedEvent = event;
-				this.editMode = false;
-				this.loading = false;
+				// get the original event with non EventFormValues properties and combine
+				if (event.id) {
+					let updatedEvent = {...this.getEvent(event.id), ...event};
+					this.eventsRegistry.set(event.id, updatedEvent as Event);
+					this.selectedEvent = updatedEvent as Event;
+				}
 			})
-		} catch(error) {
-			console.log(error);
-			runInAction(() => { this.loading = false; });
-		}
+		} catch(error) { console.log(error); }
 	}
 
 	deleteEvent = async (id: string) => {
@@ -173,6 +177,23 @@ export default class EventStore {
 			console.log(error);
 		} finally {
 			runInAction(() => this.loading = false);
+		}
+	}
+
+	cancelEventToggle = async () => {
+		this.loading = true;
+		try {
+			// send request to API
+			await agent.Events.attend(this.selectedEvent!.id);
+			runInAction(() => {
+				// update isCancelled property and update the registry
+				this.selectedEvent!.isCancelled = !this.selectedEvent?.isCancelled;
+				this.eventsRegistry.set(this.selectedEvent!.id, this.selectedEvent!);
+			});
+		} catch (error) {
+			console.log(error);
+		} finally {
+			runInAction(() => { this.loading = false });
 		}
 	}
 
@@ -227,3 +248,39 @@ export default class EventStore {
   //     }, {} as {[key: string]: Event[]})
   //   )
   // }
+
+
+
+  // PRIOR TO USING EVENTFORMVALUES
+
+//   createEvent = async (event: Event) => {
+// 	this.loading = true;
+// 	try {
+// 		await agent.Events.create(event);
+// 		runInAction(() => {
+// 			this.eventsRegistry.set(event.id, event);
+// 			this.selectedEvent = event;
+// 			this.editMode = false;
+// 			this.loading = false;
+// 		});
+// 	} catch (error) {
+// 		console.log(error);
+// 		runInAction(() => { this.loading = false; });
+// 	}
+// }
+
+// updateEvent = async (event: Event) => {
+// 	this.loading = true;
+// 	try {
+// 		await agent.Events.update(event);
+// 		runInAction(() => {
+// 			this.eventsRegistry.set(event.id, event);
+// 			this.selectedEvent = event;
+// 			this.editMode = false;
+// 			this.loading = false;
+// 		})
+// 	} catch(error) {
+// 		console.log(error);
+// 		runInAction(() => { this.loading = false; });
+// 	}
+// }

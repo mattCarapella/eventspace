@@ -12,7 +12,7 @@ import CustomTextArea from '../../../app/common/form/CustomTextArea';
 import CustomSelectInput from '../../../app/common/form/CustomSelectInput';
 import { categoryOptions } from '../../../app/common/options/categoryOptions';
 import CustomDateInput from '../../../app/common/form/CustomDateInput';
-import { Event } from '../../../app/models/event';
+import { Event, EventFormValues } from '../../../app/models/event';
 
 export default observer(function EventForm() {
 	const {eventStore} = useStore();
@@ -20,24 +20,13 @@ export default observer(function EventForm() {
 	const {id} = useParams<{id: string}>();
 	let history = useHistory();
 
-  	const [event, setEvent] = useState<Event>({
-		id: '',
-		name: '',
-		date: null,
-		description: '',
-		ticketLink: '',
-		numberOfTickets: '',
-		cost: '',
-		costMax: '',
-		category: '',
-		genre: '',
-		venue: '',
-		address: '',
-		city: '',
-		state: '',
-		zipcode: '',
-		country: ''
-  	});
+  	const [event, setEvent] = useState<EventFormValues>(new EventFormValues());
+
+	useEffect(() => {
+		// Check to see if id exists. If so, get event from store and then populate event 
+		// form values whats in current state.
+		if (id) loadEvent(id).then(event => setEvent(new EventFormValues(event)));
+	}, [id, loadEvent]);
 
   	const validationSchema = Yup.object({
 		name: Yup.string().required('Event name is required.'),
@@ -51,15 +40,8 @@ export default observer(function EventForm() {
 		state: Yup.string().required('State is required.'),
   	})
 
-	// Check to see if id exists. If so, get event from store and then populate setEvent and 
-	// override whats in current useState.
-	useEffect(() => {
-		// '!' overrides typecheck since we know event must exist
-		if (id) loadEvent(id).then(event => setEvent(event!));
-	}, [id, loadEvent]);
-
-	function handleFormSubmit(event: Event) {
-		if (event.id.length === 0) {
+	function handleFormSubmit(event: EventFormValues) {
+		if (!event.id) {
 			let newEvent = {...event, id: uuid()}
 			createEvent(newEvent).then(() => history.push(`/events/${newEvent.id}`));
 		} else {
@@ -112,10 +94,10 @@ export default observer(function EventForm() {
 							<CustomTextInput name='zipcode' placeholder='Zipcode'/>
 							<CustomTextInput name='country' placeholder='Country'/>
 							<Button 
-								loading={loading} 
+								loading={isSubmitting} 
 								floated='right' 
 								positive 
-								disabled={isSubmitting || !isValid || !dirty}
+								disabled={isSubmitting || !isValid}
 								type='submit' 
 								content='Submit'
 							/>
@@ -140,3 +122,47 @@ export default observer(function EventForm() {
   //   const {name, value} = e.target;
   //   setEvent({...event, [name]: value});
   // }s
+
+
+	// **********************************************************
+  	// 		PRIOR TO USING EVENTFORMVALUES
+	// **********************************************************
+
+	// const [event, setEvent] = useState<EventFormValues>({
+	// 	id: '',
+	// 	name: '',
+	// 	date: null,
+	// 	description: '',
+	// 	ticketLink: '',
+	// 	numberOfTickets: '',
+	// 	cost: '',
+	// 	costMax: '',
+	// 	category: '',
+	// 	genre: '',
+	// 	venue: '',
+	// 	address: '',
+	// 	city: '',
+	// 	state: '',
+	// 	zipcode: '',
+	// 	country: ''
+	// });
+	//
+	//
+	// useEffect(() => {
+	// 	// Check to see if id exists. If so, get event from store and then populate setEvent and 
+	// 	// override whats in current useState.
+	// 	if (id) loadEvent(id).then(event => setEvent(event!));
+	// }, [id, loadEvent]);
+	//
+	//
+	//
+	// function handleFormSubmit(event: Event) {
+	// 	if (event.id.length === 0) {
+	// 		let newEvent = {...event, id: uuid()}
+	// 		createEvent(newEvent).then(() => history.push(`/events/${newEvent.id}`));
+	// 	} else {
+	// 		updateEvent(event).then(() => history.push(`/events/${event.id}`));
+	// 	}
+	// }
+	//
+	//

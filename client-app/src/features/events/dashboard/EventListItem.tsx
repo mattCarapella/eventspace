@@ -14,9 +14,17 @@ export default observer(function EventListItem({event}: Props) {
   	return (
 		<Segment.Group>
 			<Segment>
+				{event.isCancelled &&
+					<Label 
+						content='This event has been cancelled.' 
+						attached='top' 
+						color='red' 
+						style={{textAlign: 'center'}} 
+					/>
+				}
 				<Item.Group>
 					<Item>
-						<Item.Image src='/assets/user.png' size='tiny' circular/>
+						<Item.Image src='/assets/user.png' size='tiny' circular style={{marginBottom: 5}} />
 						<Item.Content>
 							<Item.Header as={Link} to={`/events/${event.id}`}>{event.name}</Item.Header>
 							<Item.Description>Hosted by {event.hostUsername}</Item.Description>

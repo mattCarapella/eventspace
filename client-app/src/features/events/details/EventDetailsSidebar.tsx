@@ -29,7 +29,7 @@ export default function EventDetailsSidebar({event: {attendees, host}}: Props) {
 								<Label style={{position: 'absolute'}} color='orange' ribbon='right' content='Host'/>
 							)}
 							<Image src={attendee.image || `/assets/user.png`} size='tiny'/>
-							<Item.Content>
+							<Item.Content verticalAlign='middle'>
 								<Item.Header as='h3'>
 									<Link to={`/profiles/${attendee.username}`}>{attendee.displayName}</Link>
 								</Item.Header>

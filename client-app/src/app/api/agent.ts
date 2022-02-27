@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { history } from '../..';
-import { Event } from '../models/event';
+import { Event, EventFormValues } from '../models/event';
 import { User, UserFormValues } from '../models/user';
 import { store } from '../stores/store';
 
@@ -81,8 +81,8 @@ const requests = {
 const Events = {
 	list: () => requests.get<Event[]>('/events'),
 	details: (id: string) => requests.get<Event>(`/events/${id}`),
-	create: (event: Event) => requests.post<void>('/events', event),
-	update: (event: Event) => requests.put<void>(`/events/${event.id}`, event),
+	create: (event: EventFormValues) => requests.post<void>('/events', event),
+	update: (event: EventFormValues) => requests.put<void>(`/events/${event.id}`, event),
 	delete: (id: string) => requests.del<void>(`/events/${id}`),
 	attend: (id: string) => requests.post<void>(`/events/${id}/attend`, {})
 }
