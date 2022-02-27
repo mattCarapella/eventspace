@@ -26,14 +26,17 @@ export default observer(function EventForm() {
 		date: null,
 		description: '',
 		ticketLink: '',
-		cost: null,
+		numberOfTickets: '',
+		cost: '',
+		costMax: '',
 		category: '',
 		genre: '',
 		venue: '',
 		address: '',
 		city: '',
 		state: '',
-		zipcode: ''
+		zipcode: '',
+		country: ''
   	});
 
   	const validationSchema = Yup.object({
@@ -41,7 +44,7 @@ export default observer(function EventForm() {
 		date: Yup.string().required('Date is required.').nullable(),
 		description: Yup.string().required('Description is required.'),
 		category: Yup.string().required('Category is required.'),
-		cost: Yup.number().typeError('Must be a number.').moreThan(-.99, 'Cost must be a positive value.'),
+		// cost: Yup.number().typeError('Must be a number.').moreThan(-.99, 'Cost must be a positive value.'),
 		venue: Yup.string().required('Venue is required.'),
 		address: Yup.string().required('Address is required.'),
 		city: Yup.string().required('City is required.'),
@@ -96,8 +99,10 @@ export default observer(function EventForm() {
 							/>
 
 							<Header content='Ticket details' sub color='teal' />
-							<CustomTextInput name='ticketLink' placeholder='Ticket Link'/>
 							<CustomTextInput name='cost' placeholder='Cost'/>
+							<CustomTextInput name='ticketLink' placeholder='Ticket Link'/>
+							<CustomTextInput name='maxCost' placeholder='Maximum Cost'/>
+							<CustomTextInput name='numberOfTickets' placeholder='Number of Tickets Available'/>
 							
 							<Header content='Location details' sub color='teal' />
 							<CustomTextInput name='venue' placeholder='Venue'/>
@@ -105,6 +110,7 @@ export default observer(function EventForm() {
 							<CustomTextInput name='city' placeholder='City'/>
 							<CustomTextInput name='state' placeholder='State'/>
 							<CustomTextInput name='zipcode' placeholder='Zipcode'/>
+							<CustomTextInput name='country' placeholder='Country'/>
 							<Button 
 								loading={loading} 
 								floated='right' 

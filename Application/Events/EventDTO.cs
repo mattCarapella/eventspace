@@ -7,15 +7,15 @@ public class EventDTO
 	public Guid Id { get; set; }
     public string Name { get; set; }
     public DateTime Date { get; set; }
-	public DateTime? EndDate { get; set; }
+	// public DateTime EndDate { get; set; }
     public string Description { get; set; }
-    public float Cost { get; set; }
-	public float CostMax { get; set; }
+    public string Cost { get; set; }
+	public string CostMax { get; set; }
     public string TicketLink { get; set; }
-	public int NumberOfTickets { get; set; }
-	public DateTime SaleStart { get; set; }
-	public DateTime SaleEnd { get; set; }
-	public string EventType { get; set; } 
+	public string NumberOfTickets { get; set; }
+	// public DateTime SaleStart { get; set; }
+	// public DateTime SaleEnd { get; set; }
+	// public string EventType { get; set; } 
     public string Category { get; set; }
     public int Likes { get; set; }
     public string Genre { get; set; }
@@ -32,3 +32,4 @@ public class EventDTO
 	public ICollection<Profile> Attendees { get; set; }
 
 }
+

@@ -11,26 +11,26 @@ import EventDetailsSidebar from './EventDetailsSidebar';
 
 export default observer(function EventDetails() {
   
-  const {eventStore} = useStore();
-  const {selectedEvent: event, loadingInitial, loadEvent } = eventStore;
-  const {id} = useParams<{id: string}>();
+	const {eventStore} = useStore();
+	const {selectedEvent: event, loadingInitial, loadEvent } = eventStore;
+	const {id} = useParams<{id: string}>();
 
-  useEffect(() => {
-    if(id) loadEvent(id);
-  }, [id, loadEvent]);
+	useEffect(() => {
+		if(id) loadEvent(id);
+	}, [id, loadEvent]);
 
-  if (loadingInitial || !event) return <LoadingComponent content='Loading...' />
+	if (loadingInitial || !event) return <LoadingComponent content='Loading...'/>
 
-  return (
-    <Grid>
-      <Grid.Column width={10}>
-        <EventDetailsHeader event={event} />
-        <EventDetailsInfo event={event} />
-        <EventDetailsComments />
-      </Grid.Column>
-      <Grid.Column width={6}>
-        <EventDetailsSidebar />
-      </Grid.Column>
-    </Grid>
-  );
+	return (
+		<Grid>
+			<Grid.Column width={10}>
+				<EventDetailsHeader event={event}/>
+				<EventDetailsInfo event={event}/>
+				<EventDetailsComments/>
+			</Grid.Column>
+			<Grid.Column width={6}>
+				<EventDetailsSidebar event={event!}/>
+			</Grid.Column>
+		</Grid>
+	);
 });
