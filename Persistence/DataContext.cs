@@ -12,14 +12,14 @@ public class DataContext : IdentityDbContext<AppUser>
   
 	public DataContext(DbContextOptions options) : base(options)
 	{
-
 	}
-
 
 	// Database table. DbSet takes a param of type of prop. Requires Domain namespace. Name reflects name of db table. Contains columns that match names of props in Activity.cs.
 	// If DbSet<TEntity> properties have a public setter, they're automatically initialized when the instance of the derived context is created.
 	public DbSet<Event> Events { get; set; }
 	public DbSet<EventAttendee> EventAttendees { get; set; }
+	public DbSet<Photo> Photos { get; set; }
+
 
 	// Overrides OnModelCreating method from IdentityDbContext
 	protected override void OnModelCreating(ModelBuilder builder)
