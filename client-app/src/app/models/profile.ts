@@ -4,7 +4,8 @@ export interface Profile {
 	username: string;
 	displayName: string;
 	bio?: string;
-	image?: string	
+	image?: string;
+	photos?: Photo[];
 }
 
 // Create a new Event Attendee object
@@ -14,4 +15,10 @@ export class Profile implements Profile {
 		this.displayName = user.displayName;
 		this.image = user.image;
 	}
+}
+
+export interface Photo {
+	id: string,
+	url: string,
+	isMain: boolean
 }

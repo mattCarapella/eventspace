@@ -16,6 +16,7 @@ import { useStore } from '../stores/store';
 import LoadingComponent from './LoadingComponent';
 import ModalContainer from '../common/modals/ModalContainer';
 import SignupForm from '../../features/users/SignupForm';
+import ProfilePage from '../../features/profiles/ProfilePage';
 
 function App() {
 	const location = useLocation();
@@ -45,7 +46,8 @@ function App() {
 					<Switch>
 						<Route exact path='/events' component={EventDashboard}/>
 						<Route path='/events/:id' component={EventDetails}/>
-						<Route path={['/createEvent', '/edit/:id']} key={location.key} component={EventForm} />
+						<Route path={['/createEvent', '/edit/:id']} key={location.key} component={EventForm}/>
+						<Route path='/profiles/:username' component={ProfilePage}/>
 						<Route path='/errors' component={TestErrors}/>
 						<Route path='/server-error' component={ServerError}/>
 						<Route path='/login' component={LoginForm}/>

@@ -40,7 +40,7 @@ export default class EventStore {
 
 	
 
-  // ACTIONS:
+  	// ACTIONS:
 
   	loadEvents = async () => {
 		this.setLoadingInitial(true);
