@@ -1,5 +1,3 @@
-using Application.Profiles;
-
 namespace Application.Events;
 
 public class EventDTO
@@ -29,7 +27,7 @@ public class EventDTO
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }	
 	public string HostUsername { get; set; }
-	public ICollection<Profile> Attendees { get; set; }
-
+	//public ICollection<Profile> Attendees { get; set; }
+	public ICollection<AttendeeDTO> Attendees { get; set; } 
 }
 

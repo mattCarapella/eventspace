@@ -1,6 +1,7 @@
 using API.DTOs;
 using API.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Security.Claims;
 
 namespace API.Controllers;
@@ -25,13 +26,10 @@ public class AccountController : ControllerBase
 	[HttpPost("login")]
 	public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
 	{
-		// Gets the user, if any, associated with the normalized value of the specified email address. 
-		// Note: Its recommended that identityOptions.User.RequireUniqueEmail be set to true when using 
-		// this method, otherwise the store may throw if there are users with duplicate emails.
-		var user = await _userManager.FindByEmailAsync(loginDTO.Email);
-
-		// If user email is not found return 401 response, else sign in using password from LoginDTO.
+		var user = await _userManager.Users.Include(p => p.Photos)
+			.FirstOrDefaultAsync(u => u.Email == loginDTO.Email);
 		if (user == null) return Unauthorized();
+		// sign in using password from LoginDTO.
 		var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
 
 		// Sends back user data as UserDTO if user is found and authorized, otherwise a 401 response. 
@@ -47,33 +45,32 @@ public class AccountController : ControllerBase
 	[HttpPost("signup")]
 	public async Task<ActionResult<UserDTO>> SignUp(RegisterDTO registerDTO)
 	{
-		// Confirm that email and username are not in use
+		
 		if (await _userManager.Users.AnyAsync(x => x.NormalizedEmail == registerDTO.Email.ToUpper()))
 		{
-			//return BadRequest("That email is taken.");
+			// Confirm that email is not in use
 			ModelState.AddModelError("email", "Email is taken.");
 			return ValidationProblem();
 		}
 		if (await _userManager.Users.AnyAsync(x => x.NormalizedUserName == registerDTO.Username.ToUpper()))
 		{
-			// return BadRequest("That username is taken.");
+			// Confirm that username is not in use
 			ModelState.AddModelError("username", "Username is taken."); 
 			return ValidationProblem();
 		}
 
 		// Create and save the new user.
-		var user = new AppUser{
+		var newUser = new AppUser{
 			DisplayName = registerDTO.DisplayName,
 			UserName = registerDTO.Username,
 			Email = registerDTO.Email
 		};
-		var result = await _userManager.CreateAsync(user, registerDTO.Password);
+		var result = await _userManager.CreateAsync(newUser, registerDTO.Password);
 
 		// Returns UserDTO to log the user in on success or 401 response on failure.
 		if (result.Succeeded) {
-			return CreateUserObject(user);
+			return CreateUserObject(newUser);
 		}
-		// return BadRequest("Problem registering new user.");
 		ModelState.AddModelError("badRequest", "Problem registering new user.");
 		return ValidationProblem();
 	}
@@ -82,22 +79,34 @@ public class AccountController : ControllerBase
 	[HttpGet]
 	public async Task<ActionResult<UserDTO>> GetCurrentUser()
 	{
-		// The User passed to FindByEmailAsync() is the System.Security.Claims.ClaimsPrincipal 
-		// for user associated with the executing action.
-		var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
-		return CreateUserObject(user);
+		var currentUser = await _userManager.Users.Include(p => p.Photos)
+			.FirstOrDefaultAsync(u => u.Email == User.FindFirstValue(ClaimTypes.Email));
+		return CreateUserObject(currentUser);
 	}
-
 
 	private UserDTO CreateUserObject(AppUser user) 
 	{
 		return new UserDTO
 		{
 			DisplayName = user.DisplayName,
-			Image = null,
+			Image = user.Photos?.FirstOrDefault(x => x.IsMain)?.Url,
 			Token = _tokenService.CreateToken(user),
 			Username = user.UserName
 		};
 	}
 
 }
+
+
+
+
+
+// Login() without including photos
+	// Gets the user, if any, associated with the normalized value of the specified email address. 
+	// Note: Its recommended that identityOptions.User.RequireUniqueEmail be set to true when using 
+	// this method, otherwise the store may throw if there are users with duplicate emails.
+// var currentUser = await _userManager.FindByEmailAsync(loginDTO.Email);
+
+
+// GetCurrentUser() without including photos
+// var currentUser = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));

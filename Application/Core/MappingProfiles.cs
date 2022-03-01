@@ -15,14 +15,23 @@ public class MappingProfiles : Profile
 						u => u.IsHost).AppUser.UserName));
 
 		// This is what will be included for attendees inside an event response
-		CreateMap<EventAttendee, Profiles.Profile>()
+		CreateMap<EventAttendee, AttendeeDTO>()
 			.ForMember(d => d.DisplayName, o => o.MapFrom(x => x.AppUser.DisplayName))
 			.ForMember(d => d.Username, o => o.MapFrom(x => x.AppUser.UserName))
-			.ForMember(d => d.Bio, o => o.MapFrom(x => x.AppUser.Bio));
+			.ForMember(d => d.Bio, o => o.MapFrom(x => x.AppUser.Bio))
+			.ForMember(d => d.Image, o => o.MapFrom(x => x.AppUser.Photos.FirstOrDefault(p => p.IsMain).Url));
 
 		CreateMap<AppUser, Profiles.Profile>()
 			.ForMember(d => d.Image, o => o.MapFrom(x => x.Photos.FirstOrDefault(p => p.IsMain).Url));
-	
 	}
 
 }
+
+
+
+
+// PRIOR TO USING AttendeeDTO
+// CreateMap<EventAttendee, Profiles.Profile>()
+// 			.ForMember(d => d.DisplayName, o => o.MapFrom(x => x.AppUser.DisplayName))
+// 			.ForMember(d => d.Username, o => o.MapFrom(x => x.AppUser.UserName))
+// 			.ForMember(d => d.Bio, o => o.MapFrom(x => x.AppUser.Bio));
