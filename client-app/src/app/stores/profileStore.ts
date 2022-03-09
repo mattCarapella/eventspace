@@ -1,12 +1,13 @@
-import { makeAutoObservable, makeObservable, runInAction } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Profile } from "../models/profile";
+import { Photo, Profile } from "../models/profile";
 import { store } from "./store";
 
 export default class ProfileStore {
 	profile: Profile | null = null;
 	loadingProfile = false;
 	uploading = false;
+	loading = false;
 
 	constructor() {
 		makeAutoObservable(this);
@@ -57,6 +58,34 @@ export default class ProfileStore {
 			console.log(error);
 			runInAction(() => this.uploading = false);
 		}
+	}
+
+	setMainPhoto = async (photo: Photo) => {
+		this.loading = true;
+		try {
+			// send request to API
+			await agent.Profiles.setMainPhoto(photo.id);
+			// update user image
+			store.userStore.setImage(photo.url);
+			runInAction(() => {
+				if (this.profile && this.profile.photos) {
+					// update current main photo
+					this.profile.photos.find(p => p.isMain)!.isMain = false;
+					// set new main photo
+					this.profile.photos.find(p => p.id === photo.id)!.isMain = true;
+					// set profile image
+					this.profile.image = photo.url;
+					this.loading = false;
+				}
+			});
+		} catch (error) {
+			console.log(error);
+			runInAction(() => this.loading = false);	
+		} 
+	}
+
+	deletePhoto = () => {
+
 	}
 
 }

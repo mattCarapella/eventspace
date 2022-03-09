@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Header, Image, Segment } from 'semantic-ui-react';
 import { useStore } from '../../app/stores/store';
+import LoginAsTesterForm from '../users/LoginAsTesterForm';
 import LoginForm from '../users/LoginForm';
 import SignupForm from '../users/SignupForm';
 
@@ -25,6 +26,7 @@ export default observer(function HomePage() {
 						<Button onClick={() => modalStore.openModal(<LoginForm/>)} size='huge' inverted>
 							Sign In
 						</Button>
+						<Button onClick={() => modalStore.openModal(<LoginAsTesterForm/>)} size='huge' inverted>Sign In to Test</Button>
 						<Button onClick={() => modalStore.openModal(<SignupForm/>)} size='huge' inverted>
 							Sign Up
 						</Button>
