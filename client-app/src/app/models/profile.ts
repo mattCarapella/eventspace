@@ -8,7 +8,7 @@ export interface Profile {
 	photos?: Photo[];
 }
 
-// Create a new Event Attendee object
+// Used to create a new EventAttendee object
 export class Profile implements Profile {
 	constructor (user: User) {
 		this.username = user.username;

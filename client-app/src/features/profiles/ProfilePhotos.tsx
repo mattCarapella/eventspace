@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react-lite';
-import React, { useState } from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 import { Button, Card, Grid, Header, Image, Tab } from 'semantic-ui-react';
 import PhotoImageUpload from '../../app/common/imageUpload/PhotoImageUpload';
-import { Profile } from '../../app/models/profile';
+import { Photo, Profile } from '../../app/models/profile';
 import { useStore } from '../../app/stores/store';
 
 interface Props {
@@ -10,11 +10,17 @@ interface Props {
 }
 
 export default observer(function ProfilePhotos({profile}: Props) {
-	const {profileStore: {isCurrentUser, uploadPhoto, uploading}} = useStore();
+	const {profileStore: {isCurrentUser, uploading, loading, uploadPhoto, setMainPhoto}} = useStore();
 	const [addPhotoMode, setAddPhotoMode] = useState(false);
+	const [target, setTarget] = useState('');
 
 	function handlePhotoUpload(file: Blob) {
 		uploadPhoto(file).then(() => setAddPhotoMode(false));
+	}
+
+	function handleSetMainPhoto(photo: Photo, e: SyntheticEvent<HTMLButtonElement>) {
+		setTarget(e.currentTarget.name);
+		setMainPhoto(photo);
 	}
 
 	return (
@@ -39,6 +45,24 @@ export default observer(function ProfilePhotos({profile}: Props) {
 							{profile.photos?.map(photo => (
 								<Card key={photo.id}>
 									<Image src={photo.url} />
+									{ isCurrentUser && (
+										<Button.Group fluid widths={2}>
+											<Button
+												basic
+												content='Set as Main'
+												color='green'
+												name={photo.id}
+												disabled={photo.isMain}
+												onClick={e => handleSetMainPhoto(photo, e)}
+											/>
+											<Button
+												basic
+												icon='trash'
+												color='red'
+												disabled={photo.isMain}
+											/>
+										</Button.Group>
+									)}
 								</Card> ))}
 						</Card.Group>
 					)}	

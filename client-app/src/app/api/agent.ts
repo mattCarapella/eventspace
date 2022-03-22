@@ -26,7 +26,7 @@ axios.interceptors.request.use(config => {
 });
 
 axios.interceptors.response.use(async response => {
-	// Do something before request is sent. Any status code that lie within the range of 2xx cause this function to trigger
+	// Do something before response is sent. Any status code that lie within the range of 2xx cause this function to trigger
 	await sleep(1000);
 	return response;
 }, (error: AxiosError) => {

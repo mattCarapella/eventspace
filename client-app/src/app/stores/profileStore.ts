@@ -69,7 +69,7 @@ export default class ProfileStore {
 			store.userStore.setImage(photo.url);
 			runInAction(() => {
 				if (this.profile && this.profile.photos) {
-					// update current main photo
+					// update current main photo (remove as main photo)
 					this.profile.photos.find(p => p.isMain)!.isMain = false;
 					// set new main photo
 					this.profile.photos.find(p => p.id === photo.id)!.isMain = true;
