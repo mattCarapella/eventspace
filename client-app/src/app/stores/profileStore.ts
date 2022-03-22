@@ -84,8 +84,22 @@ export default class ProfileStore {
 		} 
 	}
 
-	deletePhoto = () => {
-
+	deletePhoto = async (photo: Photo) => {
+		this.loading = true;
+		try {
+			// remove photo from db
+			await agent.Profiles.deletePhoto(photo.id);
+			// remove photo from store
+			runInAction(() => {
+				if (this.profile) {
+					this.profile.photos = this.profile.photos?.filter(p => p.id !== photo.id);
+					this.loading = false;
+				}
+			});
+		} catch (error) {
+			console.log(error);
+			runInAction(() => this.loading = false);
+		}
 	}
 
 }

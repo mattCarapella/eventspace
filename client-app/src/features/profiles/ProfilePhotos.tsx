@@ -10,7 +10,8 @@ interface Props {
 }
 
 export default observer(function ProfilePhotos({profile}: Props) {
-	const {profileStore: {isCurrentUser, uploading, loading, uploadPhoto, setMainPhoto}} = useStore();
+	const {profileStore: {isCurrentUser, uploading, loading, 
+							uploadPhoto, setMainPhoto, deletePhoto}} = useStore();
 	const [addPhotoMode, setAddPhotoMode] = useState(false);
 	const [target, setTarget] = useState('');
 
@@ -22,6 +23,12 @@ export default observer(function ProfilePhotos({profile}: Props) {
 		setTarget(e.currentTarget.name);
 		setMainPhoto(photo);
 	}
+
+	function handleDeletePhoto(photo: Photo, e: SyntheticEvent<HTMLButtonElement>) {
+		setTarget(e.currentTarget.name);
+		deletePhoto(photo);
+	}
+
 
 	return (
 		<Tab.Pane>
@@ -51,15 +58,19 @@ export default observer(function ProfilePhotos({profile}: Props) {
 												basic
 												content='Set as Main'
 												color='green'
-												name={photo.id}
+												name={'main' + photo.id}
 												disabled={photo.isMain}
+												loading={target === 'name' + photo.id}
 												onClick={e => handleSetMainPhoto(photo, e)}
 											/>
 											<Button
 												basic
 												icon='trash'
 												color='red'
+												name={photo.id}
 												disabled={photo.isMain}
+												loading={target === photo.id && loading}
+												onClick={e => handleDeletePhoto(photo, e)}
 											/>
 										</Button.Group>
 									)}
