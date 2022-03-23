@@ -38,6 +38,27 @@ export default class ProfileStore {
 		}
 	}
 
+	// updateProfile takes in Partial<Profile> since only DisplayName and Bio can be edited
+	updateProfile = async (profile: Partial<Profile>) => {
+		this.loading = true;
+		try {
+			// send request to API to update profile in database
+			await agent.Profiles.update(profile);
+			// updates displayName if its different than that in the store
+			runInAction(() => {
+				if (profile.displayName && profile.displayName !== store.userStore.user?.displayName) {
+					store.userStore.setDisplayName(profile.displayName);
+				}
+				// update profile in store
+				this.profile = {...this.profile, ...profile as Profile};
+				this.loading = false;
+			});
+		} catch (error) {
+			console.log(error);
+			runInAction(() => this.loading = false);
+		}
+	}
+
 	uploadPhoto = async (file: Blob) => {
 		this.uploading = true;
 		try {

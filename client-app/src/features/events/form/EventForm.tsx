@@ -38,7 +38,7 @@ export default observer(function EventForm() {
 		address: Yup.string().required('Address is required.'),
 		city: Yup.string().required('City is required.'),
 		state: Yup.string().required('State is required.'),
-  	})
+  	});
 
 	function handleFormSubmit(event: EventFormValues) {
 		if (!event.id) {
@@ -57,10 +57,10 @@ export default observer(function EventForm() {
 			<h3>Tell us a bit more so we can help create the perfect event.</h3>
 			<Segment clearing>
 				<Formik
-				enableReinitialize 
-				initialValues={event}
-				validationSchema={validationSchema}
-				onSubmit={values => handleFormSubmit(values)}
+					enableReinitialize 
+					initialValues={event}
+					validationSchema={validationSchema}
+					onSubmit={values => handleFormSubmit(values)}
 				>
 					{({handleSubmit, isValid, isSubmitting, dirty}) => (
 						<Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>

@@ -96,6 +96,8 @@ const Account = {
 
 const Profiles = {
 	get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
+	// update takes in Partial<Profile> since only DisplayName and Bio can be edited
+	update: (profile: Partial<Profile>) => requests.put('/profiles', profile),
 	uploadPhoto: (file: Blob) => {
 		let formData = new FormData();
 		formData.append('File', file);

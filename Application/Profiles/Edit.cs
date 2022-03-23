@@ -42,6 +42,9 @@ public class Edit
 			user.Bio = request.Bio ?? user.Bio;
 			user.DisplayName = request.DisplayName ?? user.DisplayName;
 
+			// marks entity as modified to prevent 400 bad request when nothing is edited
+			_context.Entry(user).State = EntityState.Modified;
+
 			var success = await _context.SaveChangesAsync() > 0;
 			if (success) return Result<Unit>.Success(Unit.Value);
 			return Result<Unit>.Failure("Profile could not be updated.");
