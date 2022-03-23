@@ -19,7 +19,7 @@ public class DataContext : IdentityDbContext<AppUser>
 	public DbSet<Event> Events { get; set; }
 	public DbSet<EventAttendee> EventAttendees { get; set; }
 	public DbSet<Photo> Photos { get; set; }
-
+	public DbSet<Comment> Comments { get; set; }
 
 	// Overrides OnModelCreating method from IdentityDbContext
 	protected override void OnModelCreating(ModelBuilder builder)
@@ -39,6 +39,12 @@ public class DataContext : IdentityDbContext<AppUser>
 			.HasOne(e => e.Event)
 			.WithMany(u => u.Attendees)
 			.HasForeignKey(ea => ea.EventId);
+
+		builder.Entity<Comment>()
+			.HasOne(e => e.Event)
+			.WithMany(c => c.Comments)
+			.OnDelete(DeleteBehavior.Cascade);
+			
 	}
 
 } 

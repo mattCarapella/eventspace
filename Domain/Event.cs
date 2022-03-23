@@ -27,5 +27,6 @@ public class Event
 	public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 	public bool IsCancelled { get; set; }
 	public ICollection<EventAttendee> Attendees { get; set; } = new List<EventAttendee>();
+	public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
 }

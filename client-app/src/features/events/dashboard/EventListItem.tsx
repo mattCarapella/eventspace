@@ -11,6 +11,12 @@ interface Props {
 }
 
 export default observer(function EventListItem({event}: Props) {
+	function truncate(text: string | undefined) {
+		if (text) {
+			return text.length > 300 ? text.substring(0, 297) + '...' : text;
+		}
+	}
+
   	return (
 		<Segment.Group>
 			<Segment>
@@ -56,7 +62,7 @@ export default observer(function EventListItem({event}: Props) {
 			<Segment clearing>
 				<Grid>
 					<Grid.Column width={13}>
-						<span>{event.description}</span>
+						<span>{truncate(event.description)}</span>
 					</Grid.Column>
 					<Grid.Column width={3}>
 						<Button
